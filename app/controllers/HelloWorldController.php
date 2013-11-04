@@ -18,7 +18,7 @@ class HelloWorldController extends \lithium\action\Controller {
 	print_r($this->request->params);
 	print_r($this->request->query);	
 	print_r(SUBDOMAIN."\n"); 
-		return "Hello World";
+		return "Hello World a";
 	}
 
 	public function to_json() {
