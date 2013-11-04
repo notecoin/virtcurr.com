@@ -17,7 +17,7 @@ class HelloWorldController extends \lithium\action\Controller {
 	public function to_string() {
 	print_r($this->request->params);
 	print_r($this->request->query);	
-	print_r(SUBDOMAIN."\n");
+	print_r(SUBDOMAIN."\n"); 
 		return "Hello World";
 	}
 
