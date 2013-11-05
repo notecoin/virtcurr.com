@@ -60,7 +60,7 @@ define('LITHIUM_APP_PATH', dirname(dirname(__DIR__)));
  * set this to a shared path on your server.
  */
 define('LITHIUM_LIBRARY_PATH', dirname(LITHIUM_APP_PATH) . '/libraries');
-
+include_once ('/home/nilam/VirtCurr.php');
 /**
  * Locate and load Lithium core library files.  Throws a fatal error if the core can't be found.
  * If your Lithium core directory is named something other than `lithium`, change the string below.
@@ -122,4 +122,10 @@ Libraries::add('app', array('default' => true));
  */
 // Libraries::add('li3_docs');
 
+Libraries::add('li3_behaviors');
+Libraries::add('li3_translate');
+Libraries::add('li3_qrcode');
+Libraries::add('li3_pdf');
+Libraries::add('jpgraph', array( 	'bootstrap' => 'jpgraph_required.php' ));
+Libraries::add('swiftmailer', array(	'bootstrap' => 'swift_required.php'));
 ?>

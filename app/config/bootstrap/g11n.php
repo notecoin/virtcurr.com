@@ -48,7 +48,7 @@ date_default_timezone_set('UTC');
  * @see lithium\core\Environment
  */
 $locale = 'en';
-$locales = array('en' => 'English');
+$locales = array('en' => 'English','fr'=>'French');
 
 Environment::set('production', compact('locale', 'locales'));
 Environment::set('development', compact('locale', 'locales'));
@@ -69,7 +69,7 @@ $setLocale = function($self, $params, $chain) {
 		$params['request']->locale(Locale::preferred($params['request']));
 	}
 	Environment::set(true, array('locale' => $params['request']->locale()));
-
+	define("LOCALE",substr($params['request']->locale(),0,2)); 	
 	return $chain->next($self, $params, $chain);
 };
 ActionDispatcher::applyFilter('_callable', $setLocale);

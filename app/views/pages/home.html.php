@@ -1,270 +1,91 @@
 <?php
-/**
- * Lithium: the most rad php framework
- *
- * @copyright     Copyright 2013, Union of RAD (http://union-of-rad.org)
- * @license       http://opensource.org/licenses/bsd-license.php The BSD License
- */
-
-use lithium\core\Libraries;
-use lithium\core\Environment;
-use lithium\data\Connections;
-
-$this->title('Home');
-$this->html->style('debug', array('inline' => false));
-
-$self = $this;
-
-$notify = function($status, $message, $solution = null) {
-	$html  = "<h4 class=\"alert alert-{$status}\">{$message}</h4>";
-	$html .= "<p>{$solution}</p>";
-	return $html;
-};
-
-$support = function($heading, $data) {
-	$result = "<h3>{$heading}</h3>";
-
-	if (is_string($data)) {
-		return $result . $data;
-	}
-	$result .= '<ul class="lithium-indicator">';
-
-	foreach ($data as $class => $enabled) {
-		$name = substr($class, strrpos($class, '\\') + 1);
-		$url = 'http://lithify.me/docs/' . str_replace('\\', '/', $class);
-		$class = $enabled ? 'enabled' : 'disabled';
-		$title = $enabled ? "Adapter `{$name}` is enabled." : "Adapter `{$name}` is disabled.";
-		$result .= "<li><a href=\"{$url}\" title=\"{$title}\" class=\"{$class}\">{$name}</a></li>";
-	}
-	$result .= '</ul>';
-
-	return $result;
-};
-
-$compiled = function($flag) {
-	ob_start();
-	phpinfo(INFO_GENERAL);
-	return strpos(ob_get_clean(), $flag) !== false;
-};
-
-$checks = array(
-	'resourcesWritable' => function() use ($notify) {
-		if (is_writable($path = Libraries::get(true, 'resources'))) {
-			return $notify('success', 'Resources directory is writable');
-		}
-		$app = basename(LITHIUM_APP_PATH);
-		$path = str_replace(LITHIUM_APP_PATH . '/', null, $path);
-		$solution = null;
-
-		if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
-			$solution  = 'To fix this, run the following from the command line: ';
-			$solution .= "<pre><code>";
-			$solution .= !empty($app) ? "$ cd {$app}\n" : null;
-			$solution .= "$ chmod -R 0777 {$path}";
-			$solution .= "</code></pre>";
-		} else {
-			$path = realpath($path);
-			$solution  = 'To fix this, give <code>modify</code> rights to the user ';
-			$solution .= "<code>Everyone</code> on directory <code>{$path}</code>.";
-		}
-		return $notify(
-			'fail',
-			'Your resource path is not writeable',
-			$solution
-		);
-	},
-	'magicQuotes' => function() use ($notify) {
-		if (!get_magic_quotes_gpc()) {
-			return;
-		}
-		return $notify(
-			'error',
-			'Magic quotes are enabled in your PHP configuration',
-			'Please set <code>magic_quotes_gpc = Off</code> in your <code>php.ini</code> settings.'
-		);
-	},
-	'registerGlobals' => function() use ($notify) {
-		if (!ini_get('register_globals')) {
-			return;
-		}
-		return $notify(
-			'error',
-			'Register globals is enabled in your PHP configuration',
-			'Please set <code>register_globals = Off</code> in your <code>php.ini</code> settings.'
-		);
-	},
-	'curlwrappers' => function() use ($notify, $compiled) {
-		if (!$compiled('with-curlwrappers')) {
-			return;
-		}
-		return $notify(
-			'error',
-			'Curlwrappers are enabled, some things might not work as expected.',
-			"This is an expiremental and usually broken feature of PHP.
-			Please recompile your PHP binary without using the <code>--with-curlwrappers</code>
-			flag or use a precompiled binary that was compiled without the flag."
-		);
-	},
-	'shortOpenTag' => function() use ($notify, $compiled) {
-		if (!ini_get('short_open_tag')) {
-			return;
-		}
-		return $notify(
-			'warning',
-			'Short open tags are enabled, you may want to disable them.',
-			"It is recommended to not rely on this option being enabled.
-			To increase the portability of your code disable this option by setting
-			<code>short_open_tag = Off</code> in your <code>php.ini</code>."
-		);
-	},
-	'database' => function() use ($notify) {
-		if ($config = Connections::config()) {
-			return $notify('success', 'Database connection(s) configured');
-		}
-		return $notify(
-			'warning',
-			'No database connection defined',
-			"To create a database connection:
-			<ol>
-				<li>Edit the file <code>config/bootstrap.php</code>.</li>
-				<li>
-					Uncomment the line having
-					<code>require __DIR__ . '/bootstrap/connections.php';</code>.
-				</li>
-				<li>Edit the file <code>config/bootstrap/connections.php</code>.</li>
-			</ol>"
-		);
-	},
-	'change' => function() use ($notify, $self) {
-		$template = $self->html->link('template', 'http://lithify.me/docs/lithium/template');
-
-		return $notify(
-			'warning',
-			"You're using the application's default home page",
-			"To change this {$template}, edit the file
-			<code>views/pages/home.html.php</code>.
-			To change the layout,
-			(that is what's wrapping content)
-			edit the file <code>views/layouts/default.html.php</code>."
-		);
-	},
-	'dbSupport' => function() use ($support) {
-		$paths = array('data.source', 'adapter.data.source.database', 'adapter.data.source.http');
-		$list = array();
-
-		foreach ($paths as $path) {
-			$list = array_merge($list, Libraries::locate($path, null, array('recursive' => false)));
-		}
-		$list = array_filter($list, function($class) { return method_exists($class, 'enabled'); });
-		$map = array_combine($list, array_map(function($c) { return $c::enabled(); }, $list));
-
-		return $support('Database support', $map);
-	},
-	'cacheSupport' => function() use ($support) {
-		$list = Libraries::locate('adapter.storage.cache', null, array('recursive' => false));
-		$list = array_filter($list, function($class) { return method_exists($class, 'enabled'); });
-		$map = array_combine($list, array_map(function($c) { return $c::enabled(); }, $list));
-
-		return $support('Cache support', $map);
-	},
-	'routing' => function() use ($support, $self) {
-		$routing = $self->html->link('routing', 'http://lithify.me/docs/lithium/net/http/Router');
-
-		return $support(
-			'Custom routing',
-			"Routes allow you to map custom URLs to your application code. To change the
-			{$routing}, edit the file <code>config/routes.php</code>."
-		);
-	},
-	'tests' => function() use ($notify, $support, $self) {
-		if (Environment::is('production')) {
-			$docsLink = $self->html->link(
-				'the documentation',
-				'http://lithify.me/docs/lithium/core/Environment::is()'
-			);
-
-			return $notify(
-				'error',
-				"Can't run tests",
-				"<p>Lithium's default environment detection rules have determined that you are
-				running in production mode. Therefore, you will not be able to run tests from the
-				web interface. You can do any of the following to remedy this:</p>
-				<ul>
-					<li>Run this application locally</li>
-					<li>Run tests from the console, using the <code>li3 test</code> command</li>
-					<li>
-						Implementing custom environment detection rules;
-						see {$docsLink} for examples
-					</li>
-				</ul>"
-			);
-		}
-		$tests = $self->html->link('run all tests', array(
-			'controller' => 'lithium\test\Controller',
-			'args' => 'all'
-		));
-		$dashboard = $self->html->link('test dashboard', array(
-			'controller' => 'lithium\test\Controller'
-		));
-		$ticket = $self->html->link(
-			'file a ticket', 'https://github.com/UnionOfRAD/lithium/issues'
-		);
-
-		return $support(
-			'Run the tests',
-			"Check the {$dashboard} or {$tests} now to ensure Lithium is working as expected."
-		);
-	}
-);
-
+use app\models\Countries;
+use app\models\Ipaddresses;
+$ActiveCountries = Countries::find('all',array(
+	'conditions' => array('active'=>true),
+	'order'=> array('ISO'=>1)
+));
+$AvaliableCountries = Countries::find('all',array(
+	'conditions' => array('active'=>false),
+	'order'=> array('Country'=>1)
+));
+$IP = $_SERVER['REMOTE_ADDR'];
+$ips = split('\.',$IP);
+$IP_no = $ips[3] + $ips[2]*256 + $ips[1]*65536 + $ips[0]*16777216;
+$Country = Ipaddresses::find('first',array(
+	'conditions'=>array('start_no'=>array('$lte'=>$IP_no),'end_no'=>array('$gte'=>$IP_no))
+));
+$Country = $Country['ISO'];
+$MyCountry = Countries::find('first',array(
+	'conditions'=>array('ISO'=>$Country)
+));
+//foreach($Country as $CC){
+//	print_r($CC['ISO']);
+//}
 ?>
-<div class="jumbotron">
-	<h1><?=ucwords(basename(LITHIUM_APP_PATH))?></h1>
-	<h2>
-		Powered by <a href="http://lithify.me/">Lithium</a>.
-	</h2>
+<div class="row">
+	<div class="col-xs-12 col-md-9" >
+		<h3>International Trading Platform</h3>
+		<blockquote>We have build a software which can be configured to meet requirements of all country specific virtual currency (bitcoin/litecoin) trading platform.<small>VirtCurr.com</small></blockquote>
+		<h4>VirtCurr.com is a Virtual Currency (Bitcoin / Litecoin) exchange or a trading platform, offering a fully regulated, secure method, for businesses to start their own buy or sell virtual currencies platform.</h4>
+		<ul>
+				<li>Fees are 0.2% per transaction</li>
+				<li>Simple verification means you could be a full customer in a matter of days</li>
+				<li>Security ensured with Cold Storage, SSL 256bit encryption & 3FA</li>
+				<li>Dedicated Server for an enhanced customer experience</li>
+				<li>Deposits & Withdrawals via secure mail services.</li>
+		</ul>
+		<h3>About Bitcoin</h3>
+		<ul>
+			<li><a href="http://www.coindesk.com/information/" target="_blank">Information from Coindesk</a></li>
+			<li><a href="http://bitcoin.org/en/" target="_blank">Bitcoin Organization</a></li>
+			<li><a href="https://en.bitcoin.it/wiki/Main_Page" target="_blank">Bitcoin Wiki</a></li>
+		</ul>
+		<h3>Security</h3>
+		<ul>
+			<li>We use <strong>Three Factor Authentication</strong> for your account to login to <?=COMPANY_URL?>.</li>
+			<li>We use <strong>Time-based One-time Password Algorithm (TOTP)</strong> for login, withdrawal/deposits and settings.</li>
+		</ul>
+	</div>
+	<div class="col-xs-7 col-md-3" style="min-height:580px;overflow:auto;height:580px;margin-top:20px">
+
+		<div class="panel panel-success">
+			<div class="panel-heading">
+				<h3 class="panel-title">Home</h3>
+			</div>
+			<div class="panel-body">
+				<ul class="list-unstyled">
+					<li><a href="<?=BASE_SECURE?><?=DOMAIN?>/<?=LOCALE?>">VirtCurr.com</a></li>
+					<li>IP: <?=$IP?></li>
+					<li><a href="<?=BASE_SECURE?><?=$MyCountry['ISO']?>.<?=DOMAIN?>/<?=LOCALE?>"><?=$MyCountry['ISO']?> (<?=$MyCountry['CurrencyCode']?> - <?=$MyCountry['CurrencyName']?>)</a></li>
+				</ul>
+			</div>
+		</div>
+	
+		<div class="panel panel-success">
+			<div class="panel-heading">
+				<h3 class="panel-title">Active Countries</h3>
+			</div>
+			<div class="panel-body">
+				<ul class="list-unstyled">
+					<?php foreach($ActiveCountries as $AC){?>
+					<li><a href="<?=BASE_SECURE?><?=$AC['ISO']?>.<?=DOMAIN?>/<?=LOCALE?>"><?=$AC['Country']?> (<?=$AC['CurrencyCode']?> - <small><?=$AC['CurrencyName']?></small>)</a></li>
+					<?php } ?>
+				</ul>
+			</div>
+		</div>
+		
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">Available Countries</h3>
+			</div>
+			<div class="panel-body">
+				<ul class="list-unstyled">
+					<?php foreach($AvaliableCountries as $AC){?>
+					<li><a href="<?=BASE_SECURE?><?=$AC['ISO']?>.<?=DOMAIN?>/<?=LOCALE?>"><?=$AC['Country']?> (<?=$AC['CurrencyCode']?> - <small><?=$AC['CurrencyName']?></small>)</a></li>
+					<?php } ?>
+				</ul>
+			</div>
+		</div>
+	</div>
 </div>
-
-<hr>
-
-<h3>Current Setup</h3>
-<?php foreach ($checks as $check): ?>
-	<?php echo $check(); ?>
-<?php endforeach; ?>
-
-<h3>Quickstart</h3>
-<p>
-	<?php echo $this->html->link(
-		'Quickstart', 'http://lithify.me/docs/manual/quickstart'
-	); ?> is a guide for PHP users who are looking to start building a simple application.
-</p>
-
-<h3>Learn more</h3>
-<p>
-	Read the
-	<?php echo $this->html->link('Manual', 'http://lithify.me/docs/lithium'); ?>
-	for detailed explanations and tutorials. The
-	<?php echo $this->html->link('API documentation', 'http://lithify.me/docs/lithium'); ?>
-	has all the implementation details you've been looking for.
-</p>
-
-<h3>Community</h3>
-<p>
-	Chat with other Lithium users and the team developing Lithium.
-</p>
-<p>
-	For <strong>general support</strong> hop on the
-	<?php echo $this->html->link('#li3 channel', 'irc://irc.freenode.net/#li3'); ?>
-	or read the
-	<?php echo $this->html->link('logs', 'http://lithify.me/bot/logs/li3'); ?>.
-</p>
-<p>
-	For <strong>core discussions</strong> join us in the
-	<?php echo $this->html->link('#li3-core channel', 'irc://irc.freenode.net/#li3-core'); ?>
-	or read the
-	<?php echo $this->html->link('logs', 'http://lithify.me/bot/logs/li3-core'); ?>.
-</p>
-<p>
-	Browse the Lithium
-	<?php echo $this->html->link('Source', 'https://github.com/UnionOfRAD/lithium'); ?>
-</p>

@@ -37,14 +37,17 @@
  */
 use lithium\data\Connections;
 
-/**
- * Uncomment this configuration to use MongoDB as your default database.
- */
-// Connections::add('default', array(
-// 	'type' => 'MongoDb',
-// 	'host' => 'localhost',
-// 	'database' => 'my_app'
-// ));
+ Connections::add('default', array(
+ 	'type' => CONNECTION_TYPE,
+ 	'host' => array(CONNECTION,
+		),
+//	'replicaSet' => true,
+ 	'database' => CONNECTION_DB,
+	'login' => CONNECTION_USER,
+	'password' => CONNECTION_PASS,	
+//	'setSlaveOkay' => true,
+//	'readPreference' => Mongo::RP_NEAREST	
+ ));
 
 /**
  * Uncomment this configuration to use CouchDB as your default database.

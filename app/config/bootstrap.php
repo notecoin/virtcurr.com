@@ -29,7 +29,12 @@
  * instructions include library names, paths to files, and any applicable class-loading rules. This
  * file also statically loads common classes to improve bootstrap performance.
  */
-define("SUBDOMAIN",substr($_SERVER['HTTP_HOST'],0,strpos( $_SERVER['HTTP_HOST'],"."))); 
+define("SUBDOMAIN", substr($_SERVER['HTTP_HOST'],0,strpos( $_SERVER['HTTP_HOST'],"."))); 
+if(strpos( $_SERVER['HTTP_HOST'],".")==0){
+define("DOMAIN",substr($_SERVER['HTTP_HOST'],strpos( $_SERVER['HTTP_HOST'],".")));
+}else{
+define("DOMAIN",substr($_SERVER['HTTP_HOST'],strpos( $_SERVER['HTTP_HOST'],".")+1));
+}
 require __DIR__ . '/bootstrap/libraries.php';
 
 /**
@@ -37,7 +42,7 @@ require __DIR__ . '/bootstrap/libraries.php';
  * rules of the `ErrorHandler` class to provide a high level of control over managing exceptions in
  * your application, with no impact on framework or application code.
  */
-// require __DIR__ . '/bootstrap/errors.php';
+require __DIR__ . '/bootstrap/errors.php';
 
 /**
  * This file defines bindings between classes which are triggered during the request cycle, and
@@ -61,20 +66,20 @@ require __DIR__ . '/bootstrap/connections.php';
  * This file contains configuration for session (and/or cookie) storage, and user or web service
  * authentication.
  */
-// require __DIR__ . '/bootstrap/session.php';
+require __DIR__ . '/bootstrap/session.php';
 
 /**
  * This file contains your application's globalization rules, including inflections,
  * transliterations, localized validation, and how localized text should be loaded. Uncomment this
  * line if you plan to globalize your site.
  */
-// require __DIR__ . '/bootstrap/g11n.php';
+require __DIR__ . '/bootstrap/g11n.php';
 
 /**
  * This file contains configurations for handling different content types within the framework,
  * including converting data to and from different formats, and handling static media assets.
  */
-// require __DIR__ . '/bootstrap/media.php';
+require __DIR__ . '/bootstrap/media.php';
 
 /**
  * This file configures console filters and settings, specifically output behavior and coloring.
@@ -82,5 +87,11 @@ require __DIR__ . '/bootstrap/connections.php';
 if (PHP_SAPI === 'cli') {
 	require __DIR__ . '/bootstrap/console.php';
 }
+if (isset($_SERVER['HTTPS'])) {
+define('BASE_SECURE','https://');
+}else{
+define('BASE_SECURE','http://');
+}
 
+define('BASE_HOST',BASE_SECURE.$_SERVER['HTTP_HOST']);
 ?>
