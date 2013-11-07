@@ -75,7 +75,11 @@ onLoad="UpdateDetails('<?=$ex?>');"
 		extract(lithium\g11n\Message::aliases());
 		$user = Session::read('member'); ?>
 		<?php 
-		if(SUBDOMAIN!=""){echo $this->_render('element', 'menu');}?>		
+		if(SUBDOMAIN!=""){
+			if($this->_request->controller!='Pages' && $this->_request->controller!='Companies'){
+				echo $this->_render('element', 'menu');
+			}
+		}?>		
 		<?php echo $this->content(); ?>
 	</div>
 	<?php echo $this->_render('element', 'footer');?>	

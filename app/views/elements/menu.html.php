@@ -1,12 +1,10 @@
-<?php use lithium\core\Environment; 
-if(substr(Environment::get('locale'),0,2)=="en"){$locale = "en";}else{$locale = Environment::get('locale');}
-?>
 <?php
 use app\models\Trades;
 $trades = Trades::find('all');
 $sel_curr = $this->_request->params['args'][0];
 if($this->_request->params['controller']!='api'){
 ?>
+<br>
 <h4><?php if($sel_curr==""){echo $t('Dashboard');}else{echo strtoupper(str_replace("_","/",$sel_curr));}?></h4>
 <ul class="nav nav-tabs push-right">
 	<?php if(!stristr($_SERVER['REQUEST_URI'],"Admin")){	?>

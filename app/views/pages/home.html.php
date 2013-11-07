@@ -1,6 +1,8 @@
 <?php
 use app\models\Countries;
 use app\models\Ipaddresses;
+use app\models\Companies;
+
 $ActiveCountries = Countries::find('all',array(
 	'conditions' => array('active'=>true),
 	'order'=> array('ISO'=>1)
@@ -19,14 +21,14 @@ $Country = $Country['ISO'];
 $MyCountry = Countries::find('first',array(
 	'conditions'=>array('ISO'=>$Country)
 ));
-//foreach($Country as $CC){
-//	print_r($CC['ISO']);
-//}
 ?>
 <div class="row">
 	<div class="col-xs-12 col-md-9" >
 		<h3>International Trading Platform</h3>
 		<blockquote>We have build a software which can be configured to meet requirements of all country specific virtual currency (bitcoin/litecoin) trading platform.<small>VirtCurr.com</small></blockquote>
+		<?php if(SUBDOMAIN!=""){?>
+		<?php echo $this->_render('element', 'subdomain');?>	
+		<?php }else{?>
 		<h4>VirtCurr.com is a Virtual Currency (Bitcoin / Litecoin) exchange or a trading platform, offering a fully regulated, secure method, for businesses to start their own buy or sell virtual currencies platform.</h4>
 		<ul>
 				<li>Fees are 0.2% per transaction</li>
@@ -46,6 +48,7 @@ $MyCountry = Countries::find('first',array(
 			<li>We use <strong>Three Factor Authentication</strong> for your account to login to <?=COMPANY_URL?>.</li>
 			<li>We use <strong>Time-based One-time Password Algorithm (TOTP)</strong> for login, withdrawal/deposits and settings.</li>
 		</ul>
+		<?php }?>
 	</div>
 	<div class="col-xs-7 col-md-3" style="min-height:580px;overflow:auto;height:580px;margin-top:20px">
 
@@ -57,7 +60,7 @@ $MyCountry = Countries::find('first',array(
 				<ul class="list-unstyled">
 					<li><a href="<?=BASE_SECURE?><?=DOMAIN?>/<?=LOCALE?>">VirtCurr.com</a></li>
 					<li>IP: <?=$IP?></li>
-					<li><a href="<?=BASE_SECURE?><?=$MyCountry['ISO']?>.<?=DOMAIN?>/<?=LOCALE?>"><?=$MyCountry['ISO']?> (<?=$MyCountry['CurrencyCode']?> - <?=$MyCountry['CurrencyName']?>)</a></li>
+					<li><a href="<?=BASE_SECURE?><?=$MyCountry['ISO']?>.<?=DOMAIN?>/<?=LOCALE?>/Companies"><?=$MyCountry['ISO']?> (<?=$MyCountry['CurrencyCode']?> - <?=$MyCountry['CurrencyName']?>)</a></li>
 				</ul>
 			</div>
 		</div>
@@ -69,7 +72,7 @@ $MyCountry = Countries::find('first',array(
 			<div class="panel-body">
 				<ul class="list-unstyled">
 					<?php foreach($ActiveCountries as $AC){?>
-					<li><a href="<?=BASE_SECURE?><?=$AC['ISO']?>.<?=DOMAIN?>/<?=LOCALE?>"><?=$AC['Country']?> (<?=$AC['CurrencyCode']?> - <small><?=$AC['CurrencyName']?></small>)</a></li>
+					<li><a href="<?=BASE_SECURE?><?=$AC['ISO']?>.<?=DOMAIN?>/<?=LOCALE?>/Companies"><?=$AC['Country']?> (<?=$AC['CurrencyCode']?> - <small><?=$AC['CurrencyName']?></small>)</a></li>
 					<?php } ?>
 				</ul>
 			</div>
@@ -82,7 +85,7 @@ $MyCountry = Countries::find('first',array(
 			<div class="panel-body">
 				<ul class="list-unstyled">
 					<?php foreach($AvaliableCountries as $AC){?>
-					<li><a href="<?=BASE_SECURE?><?=$AC['ISO']?>.<?=DOMAIN?>/<?=LOCALE?>"><?=$AC['Country']?> (<?=$AC['CurrencyCode']?> - <small><?=$AC['CurrencyName']?></small>)</a></li>
+					<li><a href="<?=BASE_SECURE?><?=$AC['ISO']?>.<?=DOMAIN?>/<?=LOCALE?>/Companies"><?=$AC['Country']?> (<?=$AC['CurrencyCode']?> - <small><?=$AC['CurrencyName']?></small>)</a></li>
 					<?php } ?>
 				</ul>
 			</div>
