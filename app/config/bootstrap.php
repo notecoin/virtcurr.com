@@ -30,6 +30,8 @@
  * file also statically loads common classes to improve bootstrap performance.
  */
 $domain = explode(".",$_SERVER['HTTP_HOST']);
+print_r($domain);
+print_r(count($domain));
 switch (count($domain)){
 	case 1:
 		define("SUBDOMAIN",'');
@@ -47,7 +49,9 @@ switch (count($domain)){
 		define("TL_DOMAIN",$domain[1].".".$domain[2]);	
 	break;
 }
-
+print_r(SUBDOMAIN);
+print_r(DOMAIN);
+print_r(TL_DOMAIN);
 require __DIR__ . '/bootstrap/libraries.php';
 
 /**
