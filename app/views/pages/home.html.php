@@ -13,15 +13,23 @@ $AvaliableCountries = Countries::find('all',array(
 ));
 $IP = $_SERVER['REMOTE_ADDR'];
 $ips = explode(".",$IP);
-$IP_no = (integer) $ips[3] + $ips[2]*256 + $ips[1]*65536 + $ips[0]*16777216;
-//$IP_no = 3319864859;
-//print_r($IP_no);
-$Country = Ipaddresses::find('first',array(
-	'conditions'=>array('start_no'=>array('$gte'=>$IP_no), 'end_no'=>array('$lte'=>$IP_no))
+$IP_no =  $ips[3] + $ips[2]*256 + $ips[1]*65536 + $ips[0]*16777216;
+$IP_no = 696780548;
+print_r($IP_no);
+$Country = Ipaddresses::find('all',array(
+	'conditions'=>array(
+		'start_no'=>array('$lte'=>$IP_no), 
+		'end_no'=>array('$gte'=>$IP_no)
+	),
+	'limit'=>1
 ));
 print_r($Country);
+foreach($Country as $CC){
+	$CountryISO = $CC['ISO'];
+}
+print_r($CountryISO);
 $MyCountry = Countries::find('first',array(
-	'conditions'=>array('ISO'=>$Country['ISO'])
+	'conditions'=>array('ISO'=>$CountryISO)
 ));
 ?>
 <div class="row">
