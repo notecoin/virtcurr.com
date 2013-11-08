@@ -18,10 +18,9 @@ print_r($IP_no);
 $Country = Ipaddresses::find('first',array(
 	'conditions'=>array('start_no'=>array('$lte'=>$IP_no),'end_no'=>array('$gte'=>$IP_no))
 ));
-$Country = $Country['ISO'];
 print_r($Country);
 $MyCountry = Countries::find('first',array(
-	'conditions'=>array('ISO'=>$Country)
+	'conditions'=>array('ISO'=>$Country['ISO'])
 ));
 ?>
 <div class="row">
