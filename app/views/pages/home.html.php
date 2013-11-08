@@ -17,7 +17,7 @@ $IP_no = (integer) $ips[3] + $ips[2]*256 + $ips[1]*65536 + $ips[0]*16777216;
 $IP_no = 3319864859;
 print_r($IP_no);
 $Country = Ipaddresses::find('first',array(
-	'conditions'=>array('start_no'=>array('$lte'=>$IP_no))
+	'conditions'=>array('ISO'=>'MU')
 ));
 print_r($Country);
 $MyCountry = Countries::find('first',array(
