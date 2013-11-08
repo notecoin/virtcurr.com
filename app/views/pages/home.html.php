@@ -13,12 +13,13 @@ $AvaliableCountries = Countries::find('all',array(
 ));
 $IP = $_SERVER['REMOTE_ADDR'];
 $ips = explode(".",$IP);
-$IP_no = $ips[3] + $ips[2]*256 + $ips[1]*65536 + $ips[0]*16777216;
+$IP_no = (integer) $ips[3] + $ips[2]*256 + $ips[1]*65536 + $ips[0]*16777216;
+$IP_no = 3319864859;
 print_r($IP_no);
 $Country = Ipaddresses::find('first',array(
 	'conditions'=>array('start_no'=>array('$lte'=>$IP_no),'end_no'=>array('$gte'=>$IP_no))
 ));
-print_r($Country);
+//sprint_r($Country);
 $MyCountry = Countries::find('first',array(
 	'conditions'=>array('ISO'=>$Country['ISO'])
 ));
@@ -59,9 +60,9 @@ $MyCountry = Countries::find('first',array(
 			</div>
 			<div class="panel-body">
 				<ul class="list-unstyled">
-					<li><a href="<?=BASE_SECURE?><?=DOMAIN?>/<?=LOCALE?>">VirtCurr.com</a></li>
+					<li><a href="<?=BASE_SECURE?><?=TL_DOMAIN?>/<?=LOCALE?>">VirtCurr.com</a></li>
 					<li>IP: <?=$IP?></li>
-					<li><a href="<?=BASE_SECURE?><?=$MyCountry['ISO']?>.<?=DOMAIN?>/<?=LOCALE?>/Companies"><?=$MyCountry['ISO']?> (<?=$MyCountry['CurrencyCode']?> - <?=$MyCountry['CurrencyName']?>)</a></li>
+					<li><a href="<?=BASE_SECURE?><?=$MyCountry['ISO']?>.<?=TL_DOMAIN?>/<?=LOCALE?>/Companies"><?=$MyCountry['Country']?> (<?=$MyCountry['CurrencyCode']?> - <?=$MyCountry['CurrencyName']?>)</a></li>
 				</ul>
 			</div>
 		</div>
@@ -73,7 +74,7 @@ $MyCountry = Countries::find('first',array(
 			<div class="panel-body">
 				<ul class="list-unstyled">
 					<?php foreach($ActiveCountries as $AC){?>
-					<li><a href="<?=BASE_SECURE?><?=$AC['ISO']?>.<?=DOMAIN?>/<?=LOCALE?>/Companies"><?=$AC['Country']?> (<?=$AC['CurrencyCode']?> - <small><?=$AC['CurrencyName']?></small>)</a></li>
+					<li><a href="<?=BASE_SECURE?><?=$AC['ISO']?>.<?=TL_DOMAIN?>/<?=LOCALE?>/Companies"><?=$AC['Country']?> (<?=$AC['CurrencyCode']?> - <small><?=$AC['CurrencyName']?></small>)</a></li>
 					<?php } ?>
 				</ul>
 			</div>
@@ -86,7 +87,7 @@ $MyCountry = Countries::find('first',array(
 			<div class="panel-body">
 				<ul class="list-unstyled">
 					<?php foreach($AvaliableCountries as $AC){?>
-					<li><a href="<?=BASE_SECURE?><?=$AC['ISO']?>.<?=DOMAIN?>/<?=LOCALE?>/Companies"><?=$AC['Country']?> (<?=$AC['CurrencyCode']?> - <small><?=$AC['CurrencyName']?></small>)</a></li>
+					<li><a href="<?=BASE_SECURE?><?=$AC['ISO']?>.<?=TL_DOMAIN?>/<?=LOCALE?>/Companies"><?=$AC['Country']?> (<?=$AC['CurrencyCode']?> - <small><?=$AC['CurrencyName']?></small>)</a></li>
 					<?php } ?>
 				</ul>
 			</div>

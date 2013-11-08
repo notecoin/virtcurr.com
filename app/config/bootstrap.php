@@ -30,13 +30,24 @@
  * file also statically loads common classes to improve bootstrap performance.
  */
 $domain = explode(".",$_SERVER['HTTP_HOST']);
-if(count($domain)==3){
-	define("SUBDOMAIN",$domain[0]);
-	define("DOMAIN",$domain[1].".".$domain[2]);
-}else{
-	define("SUBDOMAIN",'');
-	define("DOMAIN",$domain[0].".".$domain[1]);
+switch (count($domain)){
+	case 1:
+		define("SUBDOMAIN",'');
+		define("DOMAIN",$domain[0]);
+		define("TL_DOMAIN",$domain[0]);	
+	break;
+	case 2:
+		define("SUBDOMAIN",$domain[0]);
+		define("DOMAIN",$domain[1]);
+		define("TL_DOMAIN",$domain[1]);	
+	break;
+	case 3:
+		define("SUBDOMAIN",$domain[0]);
+		define("DOMAIN",$domain[1]);
+		define("TL_DOMAIN",$domain[1].".".$domain[2]);	
+	break;
 }
+
 require __DIR__ . '/bootstrap/libraries.php';
 
 /**
@@ -94,6 +105,5 @@ define('BASE_SECURE','https://');
 }else{
 define('BASE_SECURE','http://');
 }
-
 define('BASE_HOST',BASE_SECURE.$_SERVER['HTTP_HOST']);
 ?>

@@ -5,6 +5,7 @@ use app\models\Countries;
 class CompaniesController extends \lithium\action\Controller {
 
 	public function index(){
+	print_r("a".SUBDOMAIN.".................");
 		$MyCountry = Countries::find('first',array(
 		'conditions'=>array('ISO'=>strtoupper(SUBDOMAIN))
 		));
