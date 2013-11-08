@@ -39,9 +39,15 @@ switch (count($domain)){
 		define("TL_DOMAIN",$domain[0]);	
 	break;
 	case 2:
+	if($domain[1]=='com'){
+		define("SUBDOMAIN",'');
+		define("DOMAIN",$domain[0]);
+		define("TL_DOMAIN",$domain[0].'.'.$domain[1]);	
+	}else{
 		define("SUBDOMAIN",$domain[0]);
 		define("DOMAIN",$domain[1]);
 		define("TL_DOMAIN",$domain[1]);	
+	}
 	break;
 	case 3:
 		define("SUBDOMAIN",$domain[0]);
