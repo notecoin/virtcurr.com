@@ -32,10 +32,10 @@
 $domain = explode(".",$_SERVER['HTTP_HOST']);
 if(count($domain)==3){
 	define("SUBDOMAIN",$domain[0]);
-	define("DOMAIN",$domain[1]);
+	define("DOMAIN",$domain[1].".".$domain[2]);
 }else{
 	define("SUBDOMAIN",'');
-	define("DOMAIN",$domain[0]);
+	define("DOMAIN",$domain[0].".".$domain[1]);
 }
 require __DIR__ . '/bootstrap/libraries.php';
 
