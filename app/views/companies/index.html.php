@@ -1,3 +1,6 @@
+<?php 
+$IP = $_SERVER['REMOTE_ADDR'];
+?>
 <br>
 <h4>Companies <small>registered with virtcurr.com </small></h4>
 <div class="row">
@@ -13,9 +16,9 @@
 			</div>
 			<div class="panel-body">
 				<ul class="list-unstyled">
-					<li><a href="<?=BASE_SECURE?><?=DOMAIN?>/<?=LOCALE?>">VirtCurr.com</a></li>
+					<li><a href="<?=BASE_SECURE?><?=TL_DOMAIN?>/<?=LOCALE?>">VirtCurr.com</a></li>
 					<li>IP: <?=$IP?></li>
-					<li><a href="<?=BASE_SECURE?><?=$MyCountry['ISO']?>.<?=DOMAIN?>/<?=LOCALE?>/Companies"><?=$MyCountry['ISO']?> (<?=$MyCountry['CurrencyCode']?> - <?=$MyCountry['CurrencyName']?>)</a></li>
+					<li><a href="<?=BASE_SECURE?><?=$MyCountry['ISO']?>.<?=TL_DOMAIN?>/<?=LOCALE?>/Companies"><?=$MyCountry['Country']?> (<?=$MyCountry['CurrencyCode']?> - <?=$MyCountry['CurrencyName']?>)</a></li>
 				</ul>
 			</div>
 		</div>
