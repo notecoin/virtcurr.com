@@ -6,10 +6,10 @@ class CompaniesController extends \lithium\action\Controller {
 
 	public function index(){
 
-		$MyCountry = Countries::find('first',array(
+		$SelectedCountry = Countries::find('first',array(
 		'conditions'=>array('ISO'=>strtoupper(SUBDOMAIN))
 		));
-		return compact('MyCountry');
+		return compact('SelectedCountry');
 	}
 }
 ?>
