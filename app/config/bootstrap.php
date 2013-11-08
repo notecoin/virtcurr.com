@@ -29,11 +29,13 @@
  * instructions include library names, paths to files, and any applicable class-loading rules. This
  * file also statically loads common classes to improve bootstrap performance.
  */
-define("SUBDOMAIN", substr($_SERVER['HTTP_HOST'],0,strpos( $_SERVER['HTTP_HOST'],"."))); 
-if(strpos( $_SERVER['HTTP_HOST'],".")==0){
-define("DOMAIN",substr($_SERVER['HTTP_HOST'],strpos( $_SERVER['HTTP_HOST'],".")));
+$domain = explode(".",$_SERVER['HTTP_HOST']);
+if(count($domain)==3){
+	define("SUBDOMAIN",$domain[0]);
+	define("DOMAIN",$domain[1]);
 }else{
-define("DOMAIN",substr($_SERVER['HTTP_HOST'],strpos( $_SERVER['HTTP_HOST'],".")+1));
+	define("SUBDOMAIN",'');
+	define("DOMAIN",$domain[0]);
 }
 require __DIR__ . '/bootstrap/libraries.php';
 
