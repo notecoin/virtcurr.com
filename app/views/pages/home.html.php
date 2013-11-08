@@ -12,12 +12,14 @@ $AvaliableCountries = Countries::find('all',array(
 	'order'=> array('Country'=>1)
 ));
 $IP = $_SERVER['REMOTE_ADDR'];
-$ips = split('\.',$IP);
+$ips = explode(".",$IP);
 $IP_no = $ips[3] + $ips[2]*256 + $ips[1]*65536 + $ips[0]*16777216;
+print_r($IP_no);
 $Country = Ipaddresses::find('first',array(
 	'conditions'=>array('start_no'=>array('$lte'=>$IP_no),'end_no'=>array('$gte'=>$IP_no))
 ));
 $Country = $Country['ISO'];
+print_r($Country);
 $MyCountry = Countries::find('first',array(
 	'conditions'=>array('ISO'=>$Country)
 ));

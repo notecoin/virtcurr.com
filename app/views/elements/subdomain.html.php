@@ -8,7 +8,6 @@ $MySubDomainCountry = Countries::find('first',array(
 $Companies = Companies::find('all',array(
 	'conditions'=>array('ISO'=>$SubDomainCountry)
 ));
-
 ?>
 <div class="panel panel-success">
 	<div class="panel-heading">
