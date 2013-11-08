@@ -14,8 +14,6 @@ $AvaliableCountries = Countries::find('all',array(
 $IP = $_SERVER['REMOTE_ADDR'];
 $ips = explode(".",$IP);
 $IP_no =  $ips[3] + $ips[2]*256 + $ips[1]*65536 + $ips[0]*16777216;
-//$IP_no = 696780548;
-//print_r($IP_no);
 $Country = Ipaddresses::find('all',array(
 	'conditions'=>array(
 		'start_no'=>array('$lte'=>$IP_no), 
@@ -23,11 +21,9 @@ $Country = Ipaddresses::find('all',array(
 	),
 	'limit'=>1
 ));
-//print_r($Country);
 foreach($Country as $CC){
 	$CountryISO = $CC['ISO'];
 }
-//print_r($CountryISO);
 $MyCountry = Countries::find('first',array(
 	'conditions'=>array('ISO'=>$CountryISO)
 ));
