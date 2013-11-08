@@ -49,9 +49,9 @@ switch (count($domain)){
 		define("TL_DOMAIN",$domain[1].".".$domain[2]);	
 	break;
 }
-print_r(SUBDOMAIN);
-print_r(DOMAIN);
-print_r(TL_DOMAIN);
+print_r("<br>SU:".SUBDOMAIN);
+print_r("<br>D:".DOMAIN);
+print_r("<br>TLD:".TL_DOMAIN);
 require __DIR__ . '/bootstrap/libraries.php';
 
 /**
