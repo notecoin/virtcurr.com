@@ -27,7 +27,7 @@ foreach($Country as $CC){
 $MyCountry = Countries::find('first',array(
 	'conditions'=>array('ISO'=>$CountryISO)
 ));
-print_r($CountryISO);
+
 ?>
 <div class="row">
 	<div class="col-xs-12 col-md-9" >
