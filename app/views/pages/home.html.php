@@ -27,13 +27,14 @@ foreach($Country as $CC){
 $MyCountry = Countries::find('first',array(
 	'conditions'=>array('ISO'=>$CountryISO)
 ));
+print_r($CountryISO);
 ?>
 <div class="row">
 	<div class="col-xs-12 col-md-9" >
 		<h3>International Trading Platform</h3>
 		<blockquote>We have build a software which can be configured to meet requirements of all country specific virtual currency (bitcoin/litecoin) trading platform.<small>VirtCurr.com</small></blockquote>
 		<?php if(SUBDOMAIN!=""){?>
-		<?php echo $this->_render('element', 'subdomain');?>	
+			<?php echo $this->_render('element', 'subdomain',array('SelectedCountry'=>$MyCountry));?>	
 		<?php }else{?>
 		<h4>VirtCurr.com is a Virtual Currency (Bitcoin / Litecoin) exchange or a trading platform, offering a fully regulated, secure method, for businesses to start their own buy or sell virtual currencies platform.</h4>
 		<ul>
