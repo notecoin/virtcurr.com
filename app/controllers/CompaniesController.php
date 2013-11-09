@@ -27,7 +27,11 @@ class CompaniesController extends \lithium\action\Controller {
 		$SelectedCountry = Countries::find('first',array(
 		'conditions'=>array('ISO'=>strtoupper(SUBDOMAIN))
 		));
-		return compact('SelectedCountry','MyCountry','IP');
+		
+		$Companies = Companies::find('all',array(
+			'conditions'=>array('ISO'=>strtoupper(SUBDOMAIN))
+		));
+		return compact('SelectedCountry','MyCountry','IP','Companies');
 	}
 }
 ?>
