@@ -21,8 +21,10 @@ $Country = Ipaddresses::find('all',array(
 	),
 	'limit'=>1
 ));
-foreach($Country as $CC){
-	$CountryISO = $CC['ISO'];
+if(count($Country)!=0){
+	foreach($Country as $CC){
+		$CountryISO = $CC['ISO'];
+	}
 }
 $MyCountry = Countries::find('first',array(
 	'conditions'=>array('ISO'=>strtoupper(SUBDOMAIN))

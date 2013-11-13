@@ -29,6 +29,7 @@
  * instructions include library names, paths to files, and any applicable class-loading rules. This
  * file also statically loads common classes to improve bootstrap performance.
  */
+ini_set('mongo.native_long', 1);
 $domain = explode(".",$_SERVER['HTTP_HOST']);
 switch (count($domain)){
 	case 1:
