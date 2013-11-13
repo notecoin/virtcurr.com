@@ -29,6 +29,7 @@ class CompaniesController extends \lithium\action\Controller {
 			),
 			'limit'=>1
 		));
+		print_r($Country);
 		if(count($Country)!=0){
 			foreach($Country as $CC){
 				$CountryISO = $CC['ISO'];
