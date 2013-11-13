@@ -53,9 +53,11 @@ $SelectedCountry = Countries::find('first',array(
 'conditions'=>array('ISO'=>strtoupper(SUBDOMAIN))
 ));
 
-$locales = array();
-foreach($SelectedCountry['languages'] as $key=>$val){
-	$locales[$key]=$val;
+$locales = array('en'=>'English');
+if(count($SelectedCountry)!=0){
+	foreach($SelectedCountry['languages'] as $key=>$val){
+		$locales[$key]=$val;
+	}
 }
 $locale = 'en';
 
