@@ -47,8 +47,20 @@ date_default_timezone_set('UTC');
  * @see lithium\g11n\Message
  * @see lithium\core\Environment
  */
+use app\models\Countries;
+
+$SelectedCountry = Countries::find('first',array(
+'conditions'=>array('ISO'=>strtoupper(SUBDOMAIN))
+));
+
+$locales = array();
+foreach($SelectedCountry['languages'] as $key=>$val){
+	$locales[$key]=$val;
+}
 $locale = 'en';
-$locales = array('en' => 'English','fr'=>'French');
+
+//$locales = array('en' => 'English','fr'=>'French');
+
 
 Environment::set('production', compact('locale', 'locales'));
 Environment::set('development', compact('locale', 'locales'));

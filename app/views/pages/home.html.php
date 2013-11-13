@@ -25,7 +25,7 @@ foreach($Country as $CC){
 	$CountryISO = $CC['ISO'];
 }
 $MyCountry = Countries::find('first',array(
-	'conditions'=>array('ISO'=>$CountryISO)
+	'conditions'=>array('ISO'=>strtoupper(SUBDOMAIN))
 ));
 
 ?>
