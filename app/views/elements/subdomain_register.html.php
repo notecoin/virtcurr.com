@@ -5,7 +5,7 @@
 		</h3>
 	</div>
 	<div class="panel-body">
-		<p>If you would like to register a company which will be allowed to do virtual currency trading by your country laws and are willing to submit the documents for verification, then <a href="Companies/register" class="label label-primary">Register</a>.</p>
+		<p>If you would like to register a company which will be allowed to do virtual currency trading by your country laws and are willing to submit the documents for verification, then <a href="<?=BASE_SECURE?><?=strtolower($SelectedCountry['ISO'])?>.<?=TL_DOMAIN?>/Companies/register" class="label label-primary">Register</a>.</p>
 		<ul>
 			<li>Company Name, Registered Address, Registration No. </li>
 			<li>Name, Email, Mobile number</li>

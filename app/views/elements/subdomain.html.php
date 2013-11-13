@@ -14,7 +14,7 @@ use app\models\Companies;
 	<div class="panel-body">
 		<?php if(count($Companies)==0){?>
 		<h3>There are no companies registered in <?=$SelectedCountry['Country']?>.</h3>
-		<p>If you would like to register a company which will be allowed to do virtual currency trading by your country laws and are willing to submit the documents for verification, then <a href="Companies/register" class="label label-primary">Register</a>.</p>
+		<p>If you would like to register a company which will be allowed to do virtual currency trading by your country laws and are willing to submit the documents for verification, then <a href="<?=BASE_SECURE?><?=strtolower($SelectedCountry['ISO'])?>.<?=TL_DOMAIN?>/Companies/register" class="label label-primary">Register</a>.</p>
 		<ul>
 			<li>Company Name, Registered Address, Registration No. </li>
 			<li>Name, Email, Mobile number</li>
@@ -45,13 +45,13 @@ use app\models\Companies;
 			<tr>
 				<td><?=$cc['CompanyName']?></td>
 				<td><a href="<?=BASE_SECURE?><?=$cc['subname']?>.<?=TL_DOMAIN?>"><?=$cc['subname']?>.<?=COMPANY_URL?></a></td>				
-				<td><a href="companies/signin" class="btn btn-primary btn-sm">Sign in</a></td>
-				<td><a href="companies/signup" class="btn btn-success btn-sm">Sign up</a></td>
-				<td><a href="companies/admin" class="btn btn-danger btn-sm">Admin</a></td>
+				<td><a href="<?=BASE_SECURE?><?=$cc['subname']?>.<?=TL_DOMAIN?>/companies/signin" class="btn btn-primary btn-sm">Sign in</a></td>
+				<td><a href="<?=BASE_SECURE?><?=$cc['subname']?>.<?=TL_DOMAIN?>/companies/signup" class="btn btn-success btn-sm">Sign up</a></td>
+				<td><a href="<?=BASE_SECURE?><?=$cc['subname']?>.<?=TL_DOMAIN?>/companies/admin" class="btn btn-danger btn-sm">Admin</a></td>
 			</tr>
 			<?php }?>
 		</table>
-		<p>If you would like to register a company which will be allowed to do virtual currency trading by your country laws and are willing to submit the documents for verification, then <a href="Companies/Register" class="label label-primary">Register</a>.</p>
+		<p>If you would like to register a company which will be allowed to do virtual currency trading by your country laws and are willing to submit the documents for verification, then <a href="<?=BASE_SECURE?><?=$cc['subname']?>.<?=TL_DOMAIN?>/Companies/register" class="label label-primary">Register</a>.</p>
 		<?php }?>
 	</div>
 </div>
