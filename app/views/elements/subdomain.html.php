@@ -14,7 +14,7 @@ use app\models\Companies;
 	<div class="panel-body">
 		<?php if(count($Companies)==0){?>
 		<h3>There are no companies registered in <?=$SelectedCountry['Country']?>.</h3>
-		<p>If you would like to register a company which will be allowed to do virtual currency trading by your country laws and are willing to submit the documents for verification, then <a href="Companies/Register" class="label label-primary">Register</a>.</p>
+		<p>If you would like to register a company which will be allowed to do virtual currency trading by your country laws and are willing to submit the documents for verification, then <a href="Companies/register" class="label label-primary">Register</a>.</p>
 		<ul>
 			<li>Company Name, Registered Address, Registration No. </li>
 			<li>Name, Email, Mobile number</li>
