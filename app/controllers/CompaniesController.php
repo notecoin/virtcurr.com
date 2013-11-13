@@ -34,6 +34,7 @@ class CompaniesController extends \lithium\action\Controller {
 				$CountryISO = $CC['ISO'];
 			}
 		}
+		print_r($CountryISO);
 		$MyCountry = Countries::find('first',array(
 			'conditions'=>array('ISO'=>$CountryISO)
 		));
