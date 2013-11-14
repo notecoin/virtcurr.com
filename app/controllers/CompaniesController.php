@@ -152,7 +152,7 @@ class CompaniesController extends \lithium\action\Controller {
 				'template',
 				compact('email','verification','name'),
 				array(
-					'controller' => 'Companies',
+					'controller' => 'companies',
 					'template'=>'confirm',
 					'type' => 'mail',
 					'layout' => false
