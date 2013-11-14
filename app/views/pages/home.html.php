@@ -19,15 +19,18 @@ $Country = Ipaddresses::find('all',array(
 		'start_no'=>array('$lte'=>$IP_no), 
 		'end_no'=>array('$gte'=>$IP_no)
 	),
+	'fields'=>array('ISO'),
 	'limit'=>1
 ));
+
 if(count($Country)!=0){
 	foreach($Country as $CC){
 		$CountryISO = $CC['ISO'];
 	}
 }
+
 $MyCountry = Countries::find('first',array(
-	'conditions'=>array('ISO'=>strtoupper(SUBDOMAIN))
+	'conditions'=>array('ISO'=>strtoupper($CountryISO))
 ));
 
 ?>
