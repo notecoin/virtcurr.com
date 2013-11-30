@@ -56,7 +56,7 @@ class Companies extends \lithium\data\Model {
 			array('uniqueSubname', 'message' => 'This Sub-Domain name is already taken'),
 			array('notEmpty', 'message' => 'Please enter a Sub-Domain name'),
 			array('alphaNumeric', 'message' => 'Please use only alphanumeric characters'),
-			array('lengthBetween', 'message' => 'Sub-Domain should be between 4 to 20 characters, will be used as a subdomain name!', 'max'=>20,'min'=>4),
+			array('lengthBetween', 'message' => 'Sub-Domain should be between 4 to 20 characters, will be used as a subdomain/username name!', 'max'=>20,'min'=>4),
 		),
 		'mobile' => array(
 			array('notEmpty', 'message' => 'Please enter mobile number'),			

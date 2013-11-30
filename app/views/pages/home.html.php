@@ -34,6 +34,7 @@ $MyCountry = Countries::find('first',array(
 ));
 
 ?>
+<?php if( strlen(SUBDOMAIN)==2 || strlen(SUBDOMAIN)==0){?>
 <div class="row">
 	<div class="col-xs-12 col-md-9" >
 		<h3>International Trading Platform</h3>
@@ -104,3 +105,10 @@ $MyCountry = Countries::find('first',array(
 		</div>
 	</div>
 </div>
+<?php }else{?>
+<div class="row">
+	<div class="col-xs-12 col-md-9" >
+	<h2><?=SUBDOMAIN?></h2>	
+	</div>
+</div>
+<?php }?>

@@ -52,7 +52,7 @@
 				<div class="form-group has-error">
 					<?=$this->form->field('password2', array('type'=>'password','class'=>'form-control','label'=>'','placeholder'=>'same as Password','value'=>'')); ?>
 				</div>				
-				<?=$this->form->field('CompanyISO',array('type'=>'hidden','value'=>$SelectedCountry['ISO']))?>
+					<?=$this->form->field('CompanyISO',array('type'=>'hidden','value'=>$SelectedCountry['ISO']))?>
 		<?=$this->form->submit('Add Company', array('class'=>'btn btn-primary btn-lg btn-block'));?>
 		<?=$this->form->end();?>
 				</div>

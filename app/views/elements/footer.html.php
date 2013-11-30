@@ -1,7 +1,19 @@
+<?php
+use app\models\Templates;
+$templates = Templates::find('all');
+?>
 <div id="footer" style="padding:1px 20px; margin-top:20px;border-top:1px solid gray;">
 	<div class="container">
-		<ul class="nav navbar-nav">
-			<li>&copy; VirtCurr 2013</li>
+		<ul class="nav navbar-nav" style="font-size:12px ">
+			<li><a href="#">&copy; VirtCurr 2013</a></li>
+			<?php 
+			foreach($templates as $tt){
+				if($tt['name']!='tagline'){
+			?>
+				<li><a href="<?=BASE_HOST?>/<?=LOCALE?>/companies/page/<?=$tt['name']?>"><?=$tt['name']?></a></li>
+			<?php	
+				}
+			}?>
 		</ul>
 	</div>
 </div>

@@ -1,9 +1,13 @@
 <?php
 namespace app\controllers;
 use app\models\Countries;
+use app\models\Commissions;
+use app\models\Documents;
 use app\models\Ipaddresses;
 use app\models\Companies;
 use app\models\Settings;
+use app\models\Users;
+use app\models\Details;
 
 use lithium\storage\Session;
 
@@ -58,29 +62,130 @@ class CompaniesController extends \lithium\action\Controller {
         //Attempt to save the data, and update the $saved variable
         //with the outcome of the save attempt (bool)
         $saved = $Companies->save();
+				if($saved==true){
 				//send email to verify account and activate for login
-				$verification = sha1($Companies->_id);
-				$ga = new GoogleAuthenticator();
-
+					$verification = sha1($Companies->_id);
+					$ga = new GoogleAuthenticator();
+					$countries = Countries::find('first',array(
+						'conditions' => array('ISO' => $this->request->data['CompanyISO'])
+					));
+					$CurrencyCode = $countries['CurrencyCode'];
+					$CurrencyName = $countries['CurrencyName'];
+					$data = array(
+						'subname'	=>	$this->request->data['subname'],
+						'username'	=>	$this->request->data['subname'],
+						'password'	=>	$this->request->data['password'],
+						'password2'	=>	$this->request->data['password2'],					
+						'firstname'	=>	$this->request->data['firstname'],
+						'lastname'	=>	$this->request->data['lastname'],
+						'email'	=>	$this->request->data['email'],
+						'admin' => true,
+					);
+				$User = Users::create($data);
+				$saved = $User->save();
+	
 				$data = array(
-					'company_id'=>(string)$Companies->_id,
-					'subname'=>(string)$Companies->subname,
-					'email.verified' => "No",				
+					'user_id'=>(string)$User->_id,
+					'username'=>$this->request->data['subname'],
+					'subname'=>$this->request->data['subname'],
 					'email.verify' => $verification,
-					'mobile.verified' => "No",				
-					'mobile.number' => $Companies->mobile,
+					'mobile.number' => $this->request->data['mobile'],
 					'key'=>$ga->createSecret(64),
 					'secret'=>$ga->createSecret(64),
+					'Friend'=>array(),
+					'balance.BTC' => (float)0,
+					'balance.LTC' => (float)0,				
+					'balance.USD' => (float)0,									
+					'balance.'.$CurrencyCode => (float)0
 				);
-				Settings::create()->save($data);
+				Details::create()->save($data);
+	
+				$trades = array(
+					array(
+						'refresh' => false,
+						'trade' => 'BTC/LTC',
+						'First' => 'Bitcoin',
+						'Second' => 'Litecoin',
+						'active'=> true,
+					),
+					array(
+						'refresh' => false,
+						'trade' => 'BTC/USD',
+						'First' => 'Bitcoin',
+						'Second' => 'Dollar',
+						'active'=> true,						
+					),					
+					array(
+						'refresh' => false,
+						'trade' => 'LTC/USD',
+						'First' => 'Litecoin',
+						'Second' => 'Dollar',
+						'active'=> true,						
+					),					
+					array(
+						'refresh' => false,
+						'trade' => 'BTC/'.$CurrencyCode,
+						'First' => 'Bitcoin',
+						'Second' => $CurrencyName,
+						'active'=> true,						
+					),					
+					array(
+						'refresh' => false,
+						'trade' => 'LTC/'.$CurrencyCode,
+						'First' => 'Litecoin',
+						'Second' => $CurrencyName,
+						'active'=> true,						
+					),										
+				);
 				
-				$email = $this->request->data['email'];
-				$name = $this->request->data['firstname'];
-				$subname = $this->request->data['subname'];
-				$this->SendRegistrationEmail($email,$name);
-				//redirect to email verification
-				$this->redirect('Companies::email');	
-    }
+				$commissions = Commissions::find('all',array(
+					'order'=>array('_id'=>1)
+				));
+				$i = 0;
+				$commdata = array();
+				foreach($commissions as $comm){
+					$commdata[$i]['transact'] = $comm['transact'];
+					$commdata[$i]['percent'] = $comm['percent'];					
+				$i++;
+				}
+				$documents = Documents::find('all');
+				$i = 0;
+				$docudata = array();
+				foreach($documents as $docu){
+					$docudata[$i]['name'] = $docu['name'];
+					$docudata[$i]['required'] = $docu['required'];
+					$docudata[$i]['alias'] = $docu['alias'];										
+					$docudata[$i]['id'] = $docu['id'];															
+					$i++;
+				}
+				$txfees = array(
+					'BTC' => 0.0005,
+					'LTC' => 0.0001
+				);
+					$data = array(
+						'company_id'=>(string)$Companies->_id,
+						'subname'=>(string)$Companies->subname,
+						'email.verified' => "No",				
+						'email.verify' => $verification,
+						'mobile.verified' => "No",				
+						'mobile.number' => $Companies->mobile,
+						'key'=>$ga->createSecret(64),
+						'secret'=>$ga->createSecret(64),
+						'trades'=>$trades,
+						'commissions'=>$commdata,
+						'documents'=>$docudata,
+						'txfees'=> $txfees,
+					);
+					Settings::create()->save($data);
+					
+					$email = $this->request->data['email'];
+					$name = $this->request->data['firstname'];
+					$subname = $this->request->data['subname'];
+					$this->SendRegistrationEmail($email,$name);
+					//redirect to email verification
+					$this->redirect('Companies::email');	
+	    }
+		}
 		$SelectedCountry = Countries::find('first',array(
 		'conditions'=>array('ISO'=>strtoupper(SUBDOMAIN))
 		));
@@ -123,17 +228,25 @@ class CompaniesController extends \lithium\action\Controller {
 		));
 
 		$id = (string) $finduser['_id'];
+		$username = (string) $finduser['subname'];
 			if($id!=null){
 				$data = array('email.verified'=>'Yes');
 				Settings::create();
 				$settings = Settings::find('all',array(
 					'conditions'=>array('company_id'=>$id,'email.verify'=>$verify)
 				))->save($data);
+				Details::create();
+				$details = Details::find('all',array(
+					'conditions'=>array(
+						'username'=>$username
+					)
+				))->save($data);
+				
 //print_r($verify);exit;
 				if(empty($settings)==1){
 					return $this->redirect('Companies::email');
 				}else{
-					return $this->redirect('Companies::login');
+					return $this->redirect('/signin/'.$finduser);
 				}
 			}else{return $this->redirect('Companies::email');}
 
@@ -174,6 +287,8 @@ class CompaniesController extends \lithium\action\Controller {
 			
 			$mailer->send($message);
 	}
+	public function page($pagename=null){
 	
+	}	
 }
 ?>

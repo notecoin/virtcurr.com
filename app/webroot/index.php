@@ -1,8 +1,12 @@
 <?php
-//if (!isset($_SERVER['HTTPS'])) {
-//	header('Location: https://' . $_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']);
-//	exit;
-//}
+$SSL = false;
+$http = "http://";
+if($SSL == true){
+	if (!isset($_SERVER['HTTPS'])) {
+		header('Location: '. $http . $_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']);
+		exit;
+	}
+}
 /**
  * Lithium: the most rad php framework
  *
@@ -42,6 +46,15 @@ require dirname(__DIR__) . '/config/bootstrap.php';
  * @see lithium\net\http\Router
  * @see lithium\action\Controller
  */
+// special function to redirect user when signed to their user[subname]
+use lithium\storage\Session; 
+$user = Session::read('member');
+if($user!=""){
+	if(SUBDOMAIN!=$user['subname']){
+		header('Location: '. $http .$user['subname'].".". TL_DOMAIN.$_SERVER['REQUEST_URI']);
+		exit	;
+	}
+}
 echo lithium\action\Dispatcher::run(new lithium\action\Request());
 
 ?>

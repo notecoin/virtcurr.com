@@ -13,6 +13,7 @@
  * special characters you might want to use Inflector::slug() or set this manually.
  */
 use lithium\storage\Session;
+use lithium\security\Auth;
 
 $name = basename(LITHIUM_APP_PATH);
 Session::config(array(
@@ -40,6 +41,14 @@ Session::config(array(
  */
 // use lithium\security\Auth;
 
+Auth::config(array(
+    'member' => array(
+		'adapter' => 'Form',
+	    'model'   => 'Users', //Specify what model is used for auth
+        'fields'  => array('username', 'password'), //Specify which fields are used)
+	    'filters' => array('password' => array('lithium\util\String', 'hash')),
+        'validators' => array('password' => false)
+)));
 // Auth::config(array(
 // 	'default' => array(
 // 		'adapter' => 'Form',

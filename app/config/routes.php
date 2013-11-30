@@ -9,7 +9,7 @@
 /**
  * The routes file is where you define your URL structure, which is an important part of the
  * [information architecture](http://en.wikipedia.org/wiki/Information_architecture) of your
- * application. Here, you can use _routes_ to match up URL pattern strings to a set of parameters,
+ * applicationo. Here, you can use _routes_ to match up URL pattern strings to a set of parameters,
  * usually including a controller and action to dispatch matching requests to. For more information,
  * see the `Router` and `Route` classes.
  *
@@ -18,7 +18,7 @@
  */
 use lithium\net\http\Router;
 use lithium\core\Environment;
-
+use lithium\security\Auth;
 /**
  * With globalization enabled a localized route is configured by connecting a
  * continuation route. Once the route has been connected, all the other
@@ -32,6 +32,7 @@ if ($locales = Environment::get('locales')) {
 	Router::connect($template, array(), array('continue' => true));
 }
 
+
 /**
  * Here, we are connecting `'/'` (the base path) to controller called `'Pages'`,
  * its action called `view()`, and we pass a param to select the view file
@@ -40,6 +41,12 @@ if ($locales = Environment::get('locales')) {
  *
  * @see app\controllers\PagesController
  */
+
+$user = Auth::check('member'); 
+Router::connect('/signin/{:args}', 'Sessions::signin');
+Router::connect('/signup', 'Sessions::signup');
+Router::connect('/signout', 'Sessions::signout');
+
 Router::connect('/', 'Pages::view');
 
 /**

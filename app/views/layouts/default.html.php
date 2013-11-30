@@ -77,7 +77,9 @@ onLoad="UpdateDetails('<?=$ex?>');"
 		<?php 
 		if(SUBDOMAIN!=""){
 			if($this->_request->controller!='Pages' && ucwords( $this->_request->controller)!='Companies'){
-				echo $this->_render('element', 'menu');
+				if($this->_request->action!="signin" && $this->_request->action!="signup" && $this->_request->action!="signout"){
+					echo $this->_render('element', 'menu');
+				}
 			}
 		}?>		
 		<?php echo $this->content(); ?>
