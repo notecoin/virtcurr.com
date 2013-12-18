@@ -135,7 +135,7 @@ class UsersController extends \lithium\action\Controller {
 				));
 		$id = (string)$users['_id'];
 		if($id==""){
-			return $this->render(array('json' => array("Password"=>"Password Not sent","TOTP"=>false)));
+			return $this->render(array('json' => array("Password"=>"Password Not sent","TOTP"=>"No")));
 		}
 		$ga = new GoogleAuthenticator();
 		$secret = $ga->createSecret(64);

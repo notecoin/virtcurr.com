@@ -175,15 +175,19 @@ function ConvertBalance(){
 function SendPassword(){
 	$.getJSON('/Users/SendPassword/'+$("#Username").val(),
 		function(ReturnValues){
+			if(ReturnValues['Password']=="Password Not sent"){
+				$("#UserNameIcon").attr("class", "glyphicon glyphicon-remove");
+				$("#LoginEmailPassword").hide();
+				return false;
+			}
 			$("#LoginEmailPassword").show();
 			$("#UserNameIcon").attr("class", "glyphicon glyphicon-ok");
-			if(ReturnValues['TOTP']=="No"){
-				$("#UserNameIcon").attr("class", "glyphicon glyphicon-remove");
-				}
 			if(ReturnValues['TOTP']=="Yes"){
 				$("#TOTPPassword").show();
-				}
+			}else{
+				$("#TOTPPassword").hide();
 			}
+		}
 	);
 }
 
