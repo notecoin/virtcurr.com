@@ -140,7 +140,7 @@ class UsersController extends \lithium\action\Controller {
 		$data = array(
 			'oneCode' => $oneCode
 		);
-		$details = Details::find('first',array(
+		Details::find('first',array(
 					'conditions'=>array('username'=>$username,'user_id'=>(string)$id)
 		))->save($data);
 		$details = Details::find('first',array(
