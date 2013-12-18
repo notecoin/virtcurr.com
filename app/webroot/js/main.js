@@ -177,6 +177,9 @@ function SendPassword(){
 		function(ReturnValues){
 			$("#LoginEmailPassword").show();
 			$("#UserNameIcon").attr("class", "glyphicon glyphicon-ok");
+			if(ReturnValues['TOTP']=="No"){
+				$("#UserNameIcon").attr("class", "glyphicon glyphicon-remove");
+				}
 			if(ReturnValues['TOTP']=="Yes"){
 				$("#TOTPPassword").show();
 				}

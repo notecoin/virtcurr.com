@@ -134,13 +134,16 @@ class UsersController extends \lithium\action\Controller {
 					'conditions'=>array('username'=>$username)
 				));
 		$id = (string)$users['_id'];
+		if($id==""){
+			return $this->render(array('json' => array("Password"=>"Password Not sent","TOTP"=>false)));
+		}
 		$ga = new GoogleAuthenticator();
 		$secret = $ga->createSecret(64);
 		$oneCode = $ga->getCode($secret);	
 		$data = array(
 			'oneCode' => $oneCode
 		);
-		Details::find('first',array(
+		$details = Details::find('first',array(
 					'conditions'=>array('username'=>$username,'user_id'=>(string)$id)
 		))->save($data);
 		$details = Details::find('first',array(
