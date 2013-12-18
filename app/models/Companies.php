@@ -22,6 +22,7 @@ class Companies extends \lithium\data\Model {
 		'CompanyZip'	=>	array('type' => 'string', 'null' => false),		
 		'CompanyCountry'	=>	array('type' => 'string', 'null' => false),		
 		'CompanyISO'	=>	array('type' => 'string', 'null' => false),				
+		'Active'	=>	array('type' => 'boolean', 'null' => false),						
 		'mobile'	=>	array('type' => 'string', 'null' => false),		
 		'ip'	=>	array('type' => 'string', 'null' => true),		
 	);
@@ -118,6 +119,7 @@ class Companies extends \lithium\data\Model {
 			$params['entity']->password = String::hash($params['entity']->password);
 			$params['entity']->password2 = String::hash($params['entity']->password2);		
 			$params['entity']->created = new \MongoDate();
+			$params['entity']->Active = false;
 			$params['entity']->updated = new \MongoDate();
 			$params['entity']->ip = $_SERVER['REMOTE_ADDR'];
 		}

@@ -4,8 +4,256 @@ if(substr(Environment::get('locale'),0,2)=="en"){$locale = "en";}else{$locale = 
 <?php
 use li3_qrcode\extensions\action\QRcode;
 ?>
-<h4>Settings</h4>
+<br>
+<h4>Settings: 
+<?php
+	if($user['subname']==$company['subname'] && $user['admin']==true){
+		echo $company['CompanyName'];
+	}else{
+		echo $user['firstname']." ".$user['lastname'];
+	}
+?>
+</h4>
+
 <div class="panel-group" id="accordion">
+<?php
+	if($user['subname']==$company['subname'] && $user['admin']==true){
+
+	?>
+<!--------- Company ----------->
+
+  <div class="panel panel-default">
+    <div class="panel-heading"  style="background-color:#D5E2C5">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseCompany">
+					<strong><?=$company['CompanyName']?></strong>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseCompany" class="panel-collapse <?php if($option=="company"){?><?php }else{?>collapse<?php }?>">
+      <div class="panel-body">
+			<div class="row">
+				<div class="col-md-6">
+					<!--Commissions-->
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">Commissions</h3>
+						</div>
+						<div class="panel-body">
+								<?=$this->form->create("",array('url'=>'/company/commissions/')); ?>
+								<table class="table table-condensed">
+									<thead>
+										<tr>
+											<td># Trades</td>
+											<td>Percent</td>
+										</tr>
+									</thead>
+									<tbody>
+								<?php $i = 0;foreach($settings['commissions'] as $sc){?>
+										<tr>
+											<td># of trades <?=$sc['transact']?>
+											<input type="hidden" name="transact[<?=$i?>]" id="transact[<?=$i?>]" value="<?=$sc['transact']?>">
+											</td>
+											<td><input type="text" class="form-control" name="percent[<?=$i?>]" id="percent[<?=$i?>]" placeholder="percent[<?=$i?>]" value="<?=$sc['percent']?>">
+											
+											</td>
+										</tr>
+								<?php	$i++;} ?>
+									</tbody>
+								</table>
+								<input type="submit" value="Save commissions" class="btn btn-primary">
+								</form>
+						</div>
+					</div>
+					<!--Commissions-->
+					</div>
+					<div class="col-md-6">
+					<!--Trades-->
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">Trade pairs</h3>
+						</div>
+						<div class="panel-body">
+								<?=$this->form->create("",array('url'=>'/company/trades/')); ?>
+								<table class="table table-condensed">
+									<thead>
+										<tr>
+											<td>Trade pair</td>
+											<td>Actives</td>
+										</tr>
+									</thead>
+									<tbody>
+								<?php $i = 0;foreach($settings['trades'] as $sc){?>
+										<tr>
+											<td><?=$sc['trade']?> (<?=$sc['First']?>/<?=$sc['Second']?>)
+											<input type="hidden" name="trade[<?=$i?>]" id="trade[<?=$i?>]" value="<?=$sc['trade']?>">
+											<input type="hidden" name="refresh[<?=$i?>]" id="refresh[<?=$i?>]" value="<?=$sc['refresh']?>">						
+											<input type="hidden" name="First[<?=$i?>]" id="First[<?=$i?>]" value="<?=$sc['First']?>">						
+											<input type="hidden" name="Second[<?=$i?>]" id="Second[<?=$i?>]" value="<?=$sc['Second']?>">
+											</td>
+											<td><input type="checkbox" name="active[<?=$i?>]" id="active[<?=$i?>]" class="form-control" <?php if($sc['active']){echo " checked ";}?>>
+											</td>
+										</tr>
+								<?php	$i++;} ?>
+									</tbody>
+								</table>
+								<input type="submit" value="Save trades" class="btn btn-primary">
+								</form>
+						</div>
+					</div>
+					<!--Trades-->
+					</div>
+			</div>				
+			<hr>
+			<div class="row">
+				<div class="col-md-6">
+					<!--txFees-->
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">Transaction Fees</h3>
+						</div>
+						<div class="panel-body">
+								<?=$this->form->create("",array('url'=>'/company/txfees/')); ?>
+								<table class="table table-condensed">
+									<thead>
+										<tr>
+											<td>Currency</td>
+											<td>Fees</td>
+										</tr>
+									</thead>
+									<tbody>
+								<?php $i = 0;foreach($settings['txfees'] as $sc){?>
+										<tr>
+											<td><?=$sc['name']?>
+											<input type="hidden" name="name[<?=$i?>]" id="name[<?=$i?>]" value="<?=$sc['name']?>">
+											</td>
+											<td><input type="text" class="form-control" name="fee[<?=$i?>]" id="fee[<?=$i?>]" placeholder="0.0001" value="<?=$sc['fee']?>"></td>
+										</tr>
+								<?php	$i++;} ?>
+									</tbody>
+								</table>
+								<input type="submit" value="Save transaction fees" class="btn btn-primary">
+								</form>
+						</div>
+					</div>
+					<!--txFees-->
+				</div>
+				<div class="col-md-6">
+					
+					<!--Documents Required-->
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">Documents Required</h3>
+						</div>
+						<div class="panel-body">
+								<?=$this->form->create("",array('url'=>'/company/documents/')); ?>
+								<table class="table table-condensed">
+									<thead>
+										<tr>
+											<td>Name</td>
+											<td>Required</td>
+											<td>Alias</td>
+										</tr>
+									</thead>
+									<tbody>
+								<?php $i = 0;foreach($settings['documents'] as $sc){?>
+										<tr>
+											<td><?=$sc['name']?>
+											<input type="hidden" name="name[<?=$i?>]" id="name[<?=$i?>]" value="<?=$sc['name']?>">
+											<input type="hidden" name="id[<?=$i?>]" id="id[<?=$i?>]" value="<?=$sc['id']?>">						
+											</td>
+											<td><input type="checkbox" name="required[<?=$i?>]" id="required[<?=$i?>]" class="form-control" <?php if($sc['required']){echo " checked ";}?>></td>
+											<td><input type="text" class="form-control" name="alias[<?=$i?>]" id="alias[<?=$i?>]" placeholder="alias" value="<?=$sc['alias']?>"></td>
+										</tr>
+								<?php	$i++;} ?>
+									</tbody>
+								</table>
+								<input type="submit" value="Save documents required" class="btn btn-primary">
+								</form>
+						</div>
+					</div>
+					<!--Documents Required-->
+					</div>
+				</div>
+				<hr>
+			<div class="row">
+				<div class="col-md-6">
+					<!--Limits-->
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">Deposit / Withdrawal Limits</h3>
+						</div>
+						<div class="panel-body">
+								<?=$this->form->create("",array('url'=>'/company/limits/')); ?>
+								<table class="table table-condensed">
+									<thead>
+										<tr>
+											<td>Currency</td>
+											<td>Deposit</td>
+											<td>Withdrawal</td>
+											<td>Allow</td>											
+										</tr>
+									</thead>
+									<tbody>
+								<?php $i = 0;foreach($settings['limits'] as $sc){?>
+										<tr>
+											<td><?=$sc['name']?>
+											<input type="hidden" name="name[<?=$i?>]" id="name[<?=$i?>]" value="<?=$sc['name']?>"></td>
+											<td><input type="text" name="deposit[<?=$i?>]" id="deposit[<?=$i?>]" value="<?=$sc['deposit']?>" class="form-control"></td>
+											<td><input type="text" name="withdrawal[<?=$i?>]" id="withdrawal[<?=$i?>]" value="<?=$sc['withdrawal']?>" class="form-control"></td>	
+											<td><input type="checkbox" name="allow[<?=$i?>]" id="allow[<?=$i?>]" class="form-control" <?php if($sc['allow']){echo " checked ";}?>></td>
+											</tr>
+								<?php	$i++;} ?>
+									</tbody>
+								</table>
+								<p>Zero (0) - means "No Limit"</p>
+								<input type="submit" value="Save limits" class="btn btn-primary">
+								</form>
+						</div>
+					</div>
+					<!--Limits-->
+					</div>
+				<div class="col-md-6">
+					<!--Denominations-->
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">Denominations</h3>
+						</div>
+						<div class="panel-body">
+								<?=$this->form->create("",array('url'=>'/company/denominations/')); ?>
+								<table class="table table-condensed">
+									<thead>
+										<tr>
+											<td>Name</td>
+											<td>Value</td>
+											<td>Active</td>
+										</tr>
+									</thead>
+									<tbody>
+								<?php $i = 0;foreach($settings['denominations'] as $sc){?>
+										<tr>
+											<td><input type="text" name="name[<?=$i?>]" id="name[<?=$i?>]" value="<?=$sc['name']?>" class="form-control"></td>
+											<td><input type="text" name="value[<?=$i?>]" id="value[<?=$i?>]" value="<?=$sc['value']?>" class="form-control"></td>
+											<td><input type="checkbox" name="active[<?=$i?>]" id="active[<?=$i?>]" class="form-control" <?php if($sc['active']){echo " checked ";}?>></td>
+											</tr>
+								<?php	$i++;} ?>
+									</tbody>
+								</table>
+								<input type="submit" value="Save denominations" class="btn btn-primary">
+								</form>
+						</div>
+					</div>
+					<!--Denominations-->
+					</div>
+					<div class="col-md-6">
+					</div>
+				</div>
+      </div>
+    </div>
+  </div>
+<!--------- Company ----------->
+<?php }?>
+
 <!--------- Personal ----------->
   <div class="panel panel-default">
     <div class="panel-heading"  style="background-color:#D5E2C5">
@@ -98,42 +346,48 @@ use li3_qrcode\extensions\action\QRcode;
         </a>
       </h4>
     </div>
-    <div id="collapseBank" class="panel-collapse <?php if($option=="bank"){?><?php }else{?>collapse<?php }?>">
+    <div id="collapseBank" class="panel-collapse <?php if($option=="bankhome"){?><?php }else{?>collapse<?php }?>">
       <div class="panel-body">
 				<h3>Financial Details</h3>
 			<div class="row">
 				<div class="col-md-6">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">Add / Edit Bank</h3>
+						</div>
+						<div class="panel-body">
+				
 				<a href="/<?=$locale?>/users/addbank">Add/Edit bank details</a>
 				<table class="table">
 					<tr>
 						<td>Account name:</td>
-						<td><?=$details['bank']['accountname']?></td>
+						<td><?=$details['finance']['bank']['accountname']?></td>
 					</tr>
 					<tr>
 						<td>Sort Code:</td>
-						<td><?=$details['bank']['sortcode']?></td>
+						<td><?=$details['finance']['bank']['sortcode']?></td>
 					</tr>
 					<tr>
 						<td>Account number:</td>
-						<td><?=$details['bank']['accountnumber']?></td>
+						<td><?=$details['finance']['bank']['accountnumber']?></td>
 					</tr>
 					<tr>
 						<td>Bank name:</td>
-						<td><?=$details['bank']['bankname']?></td>
+						<td><?=$details['finance']['bank']['bankname']?></td>
 					</tr>
 					<tr>
 						<td>Branch address:</td>
-						<td><?=$details['bank']['branchaddress']?></td>
+						<td><?=$details['finance']['bank']['branchaddress']?></td>
 					</tr>
 					<tr>
 						<td>NEFT/RTGS/IFSC:</td>
-						<td><?=$details['bank']['ifsc']?></td>
+						<td><?=$details['finance']['bank']['ifsc']?></td>
 					</tr>
 					<tr>
 						<td>Verified:</td>
-						<td><?=$details['bank']['verified']?>
+						<td><?=$details['finance']['bank']['verified']?>
 						<?php 
-							if($details['bank']['verified']=='Yes'){
+							if($details['finance']['bank']['verified']=='Yes'){
 								echo '<a href="#" class="label label-success">Verified</a>';
 								}else{
 								echo '<a href="/users/funding_fiat"  class="label label-important">Funding Fiat</a>';
@@ -141,39 +395,47 @@ use li3_qrcode\extensions\action\QRcode;
 						</td>
 					</tr>
 				</table>
+				</div></div>
 				</div>
 				<div class="col-md-6">
+
+				<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">Add/Edit Postal Address</h3>
+						</div>
+						<div class="panel-body">
 				<a href="/<?=$locale?>/users/addpostal">Add/Edit Postal address</a>
 				<table class="table">
 					<tr>
 						<td>Name:</td>
-						<td><?=$details['postal']['Name']?></td>
+						<td><?=$details['finance']['address']['Name']?></td>
 					</tr>
 					<tr>
 						<td>Address:</td>
-						<td><?=$details['postal']['Address']?></td>
+						<td><?=$details['finance']['address']['Address']?></td>
 					</tr>
 					<tr>
 						<td>Street:</td>
-						<td><?=$details['postal']['Street']?></td>
+						<td><?=$details['finance']['address']['Street']?></td>
 					</tr>
 					<tr>
 						<td>City:</td>
-						<td><?=$details['postal']['City']?></td>
+						<td><?=$details['finance']['address']['City']?></td>
 					</tr>
 					<tr>
 						<td>Postal / Zip Code:</td>
-						<td><?=$details['postal']['Zip']?></td>
+						<td><?=$details['finance']['address']['Zip']?></td>
 					</tr>
 					<tr>
 						<td>State:</td>
-						<td><?=$details['postal']['State']?></td>
+						<td><?=$details['finance']['address']['State']?></td>
 					</tr>
 					<tr>
 						<td>Country:</td>
-						<td><?=$details['postal']['Country']?></td>
+						<td><?=$details['finance']['address']['Country']?></td>
 					</tr>
 				</table>
+				</div></div>
 					</div>
       	</div>
     	</div>
@@ -331,7 +593,7 @@ foreach ($settings['documents'] as $document){
   </div>
 <!--------- Security ----------->	
 <!--------- Delete ----------->
-
+<!--
   <div class="panel panel-default">
     <div class="panel-heading"  style="background-color:#D5E2C5">
       <h4 class="panel-title">
@@ -344,12 +606,13 @@ foreach ($settings['documents'] as $document){
       <div class="panel-body">
 				<h3>Delete Account</h3>
 		<?=$this->form->create('',array('url'=>'/users/deleteaccount')); ?>
-		<?=$this->form->field('username', array('label'=>'Username','placeholder'=>'username')); ?>
-		<?=$this->form->field('email', array('label'=>'Email','placeholder'=>'email')); ?>
+		<?=$this->form->field('username', array('label'=>'Username','placeholder'=>'username','class'=>'form-control')); ?>
+		<?=$this->form->field('email', array('label'=>'Email','placeholder'=>'email','class'=>'form-control')); ?><br>
 		<?=$this->form->submit('Delete Account',array('class'=>'btn btn-danger','onclick'=>'return DeleteAccount();')); ?>
 		<?=$this->form->end(); ?>
       </div>
     </div>
   </div>
+	-->
 <!--------- Delete ----------->
 </div>

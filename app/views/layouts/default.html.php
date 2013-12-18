@@ -76,7 +76,7 @@ onLoad="UpdateDetails('<?=$ex?>');"
 		$user = Session::read('member'); ?>
 		<?php 
 		if(SUBDOMAIN!=""){
-			if($this->_request->controller!='Pages' && ucwords( $this->_request->controller)!='Companies'){
+			if($this->_request->controller!='Pages' && ucwords( $this->_request->controller)!='Companies' && ucwords( $this->_request->controller)!='Users'){
 				if($this->_request->action!="signin" && $this->_request->action!="signup" && $this->_request->action!="signout"){
 					echo $this->_render('element', 'menu');
 				}

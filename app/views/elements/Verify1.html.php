@@ -1,7 +1,7 @@
 	<div class="col-md-4">
-		<div class="panel panel-default" style="min-height:350px ">
+		<div class="panel panel-danger" style="min-height:350px ">
 			<div class="panel-heading">
-			<h2 class="panel-title"  style="cursor:pointer;font-weight:bold" onclick="document.getElementById('Graph').style.display='block';">No funds in <?=$second_curr?>  
+			<h2 class="panel-title"  style="cursor:pointer;font-weight:bold" onclick="document.getElementById('Graph').style.display='block';">No funds in <?=$second_curr?> / Verification
 <i class="glyphicon glyphicon-indent-left"></i></h2>
 			</div>
 <table class="table table-condensed" height:"334px">
@@ -16,17 +16,14 @@
 		<?php 
 	$i=0;		
 		foreach($settings['documents'] as $documents){
-
 			if($documents['required']==true){
 					if($documents['alias']==""){
 						$name = $documents['name'];
 					}else{
 						$name = $documents['alias'];
 					}
-
 				if(strlen($details[$documents['id'].'.verified'])==0){
-
-						$alldocuments[$documents['id']]="";
+						$alldocuments[$documents['id']]="No";
 				?>
 	<tr>
 		<td colspan="2">
@@ -34,7 +31,7 @@
 		</td>
 		</tr>
 					<?php }elseif($details[$documents['id'].'.verified']=='No'){
-							$alldocuments[$documents['id']]="Yes";
+							$alldocuments[$documents['id']]="Pending";
 					?>
 	<tr>
 		<td colspan="2">
@@ -42,8 +39,6 @@
 		</td>
 		</tr>
 					<?php }else{
-
-
 						$alldocuments[$documents['id']]="Yes";
 					?>
 	<tr>
@@ -55,7 +50,13 @@
 			}
 			$i++;
 		}
-
+	$all = false;
+		foreach($alldocuments as $key=>$val){						
+			if($val=='Yes'){
+			$all = true;
+			}
+		}
+		if($all){
 		?>
 	<tr>
 		<td colspan="2">If all the above are verified, add BTC/LTC or Fiat currency through the link below:	</td>
@@ -67,6 +68,7 @@
 	<tr>
 		<td colspan="2">		<a href="/users/funding_fiat" class="btn btn-primary"><?=$t("Funding Fiat")?></a></td>	
 	</tr>
+<?php }?>	
 </table>			
 	</div>
 </div>

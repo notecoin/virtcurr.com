@@ -19,14 +19,40 @@ if(Environment::get('locale')=="en_US"){$locale = "en";}else{$locale = Environme
 
 ?>
 <div style="background-image:url(/img/Stamp.png);background-position:bottom right;background-repeat:no-repeat">
+<div id="User_ID" style="display:none "><?=$details['user_id']?></div>
 <br>
 	<div class="row" >
 	<?php 
-		echo $this->_render('element', 'Graph',array(
+	$alldocuments = array();
+	$i=0;		
+	foreach($settings['documents'] as $documents){
+		if($documents['required']==true){
+				if($documents['alias']==""){
+					$name = $documents['name'];
+				}else{
+					$name = $documents['alias'];
+				}
+			if(strlen($details[$documents['id'].'.verified'])==0){
+					$alldocuments[$documents['id']]="No";
+			}elseif($details[$documents['id'].'.verified']=='No'){
+					$alldocuments[$documents['id']]="Pending";
+			}else{
+					$alldocuments[$documents['id']]="Yes";
+			}
+		}
+	}
+		$all = true;
+		foreach($alldocuments as $key=>$val){						
+			if($val!='Yes'){
+			$all = false;
+			}
+		}
+		
+	echo $this->_render('element', 'Graph',array(
 			'first_curr' => $first_curr,
 			'second_curr' => $second_curr,
 		));
-	if($$second_curr!=0){ 
+	if($$second_curr!=0 && $all){ 
 		echo $this->_render('element', 'Buy1-2',array(
 			'first_curr' => $first_curr,
 			'second_curr' => $second_curr,
@@ -41,7 +67,7 @@ if(Environment::get('locale')=="en_US"){$locale = "en";}else{$locale = Environme
 			'details' => $details,		
 		));
 	}
-	if($$first_curr!=0){
+	if($$first_curr!=0 && $all){
 		echo $this->_render('element', 'Sell2-1',array(
 			'first_curr' => $first_curr,
 			'second_curr' => $second_curr,

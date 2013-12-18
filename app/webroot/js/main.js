@@ -12,11 +12,22 @@ function UpdateDetails(ex){
 	
 }
 function GetDetails(ex){
+	user_id = $("#User_ID").html();
+	if(ex=="/EX/DASHBOARD"){ex = "BTC/LTC";}
 	$.getJSON('/Updates/Rates/'+ex,
 		function(ReturnValues){
 			if(ReturnValues['Refresh']=="Yes"){
-				window.location.assign(ReturnValues['URL']);								
-				}
+					$.getJSON('/Updates/Orders/'+ex,
+						function(Orders){
+							$('#BuyOrders').html(Orders['BuyOrdersHTML']);
+							$('#SellOrders').html(Orders['SellOrdersHTML']);							
+					});
+					$.getJSON('/Updates/YourOrders/'+ex+'/'+user_id,
+						function(Orders){
+							$('#YourCompleteOrders').html(Orders['YourCompleteOrdersHTML']);
+							$('#YourOrders').html(Orders['YourOrdersHTML']);							
+					});
+			}
 			
 			$("#LowPrice").html(ReturnValues['Low']);
 			$("#HighPrice").html(ReturnValues['High']);					
@@ -64,7 +75,7 @@ function BuyFormCalculate (){
 		BuySummary = "Amount cannot be Zero";
 		$("#BuySummary").html(BuySummary);
 		$("#BuySubmitButton").attr("disabled", "disabled");
-		$("#BuySubmitButton").attr("class", "btn btn-warning");
+		$("#BuySubmitButton").attr("class", "btn btn-warning btn-block");
 		return false;
 	}
 	if(parseFloat(BalanceSecond) <= parseFloat(GrandTotal)){
@@ -73,12 +84,12 @@ function BuyFormCalculate (){
 		BuySummary = "The transaction amount exceeds the balance by " + Excess + " " + SecondCurrency;
 		$("#BuySummary").html(BuySummary);
 		$("#BuySubmitButton").attr("disabled", "disabled");
-		$("#BuySubmitButton").attr("class", "btn btn-warning");
+		$("#BuySubmitButton").attr("class", "btn btn-warning btn-block");
 	}else{
 		BuySummary = "The transaction amount " + GrandTotal  + " " + SecondCurrency;
 		$("#BuySummary").html(BuySummary);
 		$("#BuySubmitButton").removeAttr('disabled');
-		$("#BuySubmitButton").attr("class", "btn btn-success");		
+		$("#BuySubmitButton").attr("class", "btn btn-success btn-block");		
 	}
 	if(parseFloat(GrandTotal)===0){$("#BuySubmitButton").attr("disabled", "disabled");}
 }
@@ -113,7 +124,7 @@ if(SellPriceper=="" || SellPriceper==0){return false;}
 	SellSummary = "Amount cannot be Zero";
 		$("#SellSummary").html(SellSummary);
 		$("#SellSubmitButton").attr("disabled", "disabled");
-		$("#SellSubmitButton").attr("class", "btn btn-warning");		
+		$("#SellSubmitButton").attr("class", "btn btn-warning btn-block");		
 		return false;
 	}
 
@@ -123,12 +134,12 @@ if(SellPriceper=="" || SellPriceper==0){return false;}
 		SellSummary = "The transaction amount exceeds the balance by " + Excess + " " + FirstCurrency;
 		$("#SellSummary").html(SellSummary);
 		$("#SellSubmitButton").attr("disabled", "disabled");
-		$("#SellSubmitButton").attr("class", "btn btn-warning");				
+		$("#SellSubmitButton").attr("class", "btn btn-warning btn-block");				
 	}else{
 		SellSummary = "The transaction amount " + GrandTotal  + " " + FirstCurrency;
 		$("#SellSummary").html(SellSummary);
 		$("#SellSubmitButton").removeAttr('disabled');
-		$("#SellSubmitButton").attr("class", "btn btn-success");				
+		$("#SellSubmitButton").attr("class", "btn btn-success btn-block");				
 	}
 	if(parseFloat(GrandTotal)===0){$("#SellSubmitButton").attr("disabled", "disabled");}
 }
@@ -253,36 +264,40 @@ function SuccessButtonDisable(){
 	}
 function CheckDeposit(){
 	AmountFiat = $("#AmountFiat").val();
-	if(AmountFiat==""){return false;}
+	Currency = $("#Currency").val();
+
+	if(AmountFiat==""){
+		$("#Alert").hide();
+		$("#Alert").html("Please enter amount"); 			
+		$("#Alert").show();
+		return false;}
+	if(Currency==""){
+		$("#Alert").hide();
+		$("#Alert").html("Please select currency"); 			
+		$("#Alert").show();
+		return false;}
+	
 	}
 function CheckWithdrawal(){
-	
-	if($("#WithdrawalMethod").val()=="bank"){
-		AccountName = $("#AccountName").val();		
-		if(AccountName==""){return false;}
-		SortCode = $("#SortCode").val();
-		if(SortCode==""){return false;}
-		AccountNumber = $("#AccountNumber").val();
-		if(AccountNumber==""){return false;}
-	}
-	if($("#WithdrawalMethod").val()=="post"){
-		PostalName = $("#PostalName").val();
-		if(PostalName==""){return false;}		
-		PostalStreet = $("#PostalStreet").val();
-		if(PostalStreet==""){return false;}		
-		PostalAddress = $("#PostalAddress").val();
-		if(PostalAddress==""){return false;}		
-		PostalCity = $("#PostalCity").val();
-		if(PostalCity==""){return false;}		
-		PostalZip = $("#PostalZip").val();
-		if(PostalZip==""){return false;}		
-		PostalCountry = $("#PostalCountry").val();
-		if(PostalCountry==""){return false;}		
-	}
 	WithdrawAmountFiat = $("#WithdrawAmountFiat").val();
-	if(WithdrawAmountFiat==""){return false;}
-	if(parseInt(WithdrawAmountFiat)<=5){return false;}
+	WithdrawCurrency = $("#WithdrawCurrency").val();	
+	if(WithdrawAmountFiat==""){
+		$("#WithdrawAlert").hide();
+		$("#WithdrawAlert").html("Please enter amount"); 			
+		$("#WithdrawAlert").show();
+		return false;
 	}
+	if(WithdrawCurrency==""){
+		$("#WithdrawAlert").hide();
+		$("#WithdrawAlert").html("Please select currency"); 			
+		$("#WithdrawAlert").show();
+		return false;}
+	if(parseInt(WithdrawAmountFiat)<=parseInt(5)){
+		$("#WithdrawAlert").hide();
+		$("#WithdrawAlert").html("Amount should be greater than 5"); 			
+		$("#WithdrawAlert").show();
+		return false;}
+}
 function RejectReason(value){
 	url = $("#RejectURL").attr('href');
 	len = url.length-2;
@@ -298,13 +313,25 @@ function SuccessLTCButtonDisable(){
 	$("#SendLTCSuccessButton").attr("disabled", "disabled");
 	}
 function CheckLTCPayment(){
+	$("#LTCAlert").hide();
 	address = $("#litecoinaddress").val();
-	if(address==""){return false;}
+	if(address==""){
+	$("#LTCAlert").html("Address incorrect"); 	
+	$("#LTCAlert").show();
+	return false;}
 	amount = $("#Amount").val();
-	if(amount==""){return false;}
-	maxValue = $("#maxValue").val();
-	if(parseFloat(amount)>parseFloat(maxValue)){return false;}
+	if(amount==""){
+	$("#LTCAlert").html("Not sufficient balance"); 	
+	$("#LTCAlert").show();
+	return false;}
+
 	
+	maxValue = $("#maxValue").val();
+	if(parseFloat(amount)>parseFloat(maxValue)){
+		$("#LTCAlert").html("Not sufficient balance"); 	
+		$("#LTCAlert").show();
+		return false;
+		}
 	$("#SendLTCFees").html($("#txFee").val());
 
 	$("#SendLTCAmount").html(amount);	
@@ -321,6 +348,7 @@ function CheckLTCPayment(){
 		});
 	return true;
 	}
+	
 function PaymentMethod(value){
 	if(value=="bank"){
 		$("#WithdrawalBank").show();

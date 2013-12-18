@@ -51,8 +51,9 @@ use lithium\storage\Session;
 $user = Session::read('member');
 if($user!=""){
 	if(SUBDOMAIN!=$user['subname']){
-		header('Location: '. $http .$user['subname'].".". TL_DOMAIN.$_SERVER['REQUEST_URI']);
-		exit	;
+	}else{
+//		header('Location: '. $http .$user['subname'].".". TL_DOMAIN.$_SERVER['REQUEST_URI']);	
+//		exit;
 	}
 }
 echo lithium\action\Dispatcher::run(new lithium\action\Request());

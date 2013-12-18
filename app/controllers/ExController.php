@@ -516,14 +516,16 @@ class ExController extends \lithium\action\Controller {
 	
 		$user = Session::read('member');
 		$id = $user['_id'];
-		if ($user==""){		return $this->redirect('/login');exit;}
+		if ($user==""){		return $this->redirect('/signin');exit;}
 		$details = Details::find('first',
 			array('conditions'=>array('user_id'=>$id))
 		);
+		$settings = Settings::find('first',array(
+			'conditions'=>array('subname'=>$details['subname'])
+		));
 
-		$trades = Trades::find('all');
 		$YourOrders = array();
-		foreach($trades as $t){
+		foreach($settings['trades'] as $t){
 			$YourOrders['Buy'] = $this->YourOrders($id,'Buy',substr($t['trade'],0,3),substr($t['trade'],4,3));
 			$YourOrders['Sell'] = $this->YourOrders($id,'Sell',substr($t['trade'],0,3),substr($t['trade'],4,3));			
 			$YourCompleteOrders['Buy'] = $this->YourCompleteOrders($id,'Buy',substr($t['trade'],0,3),substr($t['trade'],4,3));
@@ -535,17 +537,17 @@ class ExController extends \lithium\action\Controller {
 		$UsersRegistered = Details::count();
 		$functions = new Functions();
 		$OnlineUsers = 	$functions->OnlineUsers();
-		foreach($trades as $t){
+		foreach($settings['trades'] as $t){
 			$TotalOrders['Buy'] = $this->TotalOrders('Buy',substr($t['trade'],0,3),substr($t['trade'],4,3));
 			$TotalOrders['Sell'] = $this->TotalOrders('Sell',substr($t['trade'],0,3),substr($t['trade'],4,3));			
 			$TotalCompleteOrders['Buy'] = $this->TotalCompleteOrders('Buy',substr($t['trade'],0,3),substr($t['trade'],4,3));
 			$TotalCompleteOrders['Sell'] = $this->TotalCompleteOrders('Sell',substr($t['trade'],0,3),substr($t['trade'],4,3));						
 		}
 		$title = "Dashboard";
-		$keywords = "Dashboard, trading platform, bitcoin exchange, we trust, United Kingdom, UK";
-$description = "Dashboard for trading platform for bitcoin exchange in United Kingdom, UK";
+		$keywords = "";
+$description = "";
 
-		return compact('title','details','YourOrders','Commissions','CompletedCommissions','YourCompleteOrders','RequestFriends','UsersRegistered','OnlineUsers','TotalOrders','TotalCompleteOrders','keywords','description');
+		return compact('title','user','details','settings','YourOrders','Commissions','CompletedCommissions','YourCompleteOrders','RequestFriends','UsersRegistered','OnlineUsers','TotalOrders','TotalCompleteOrders','keywords','description');
 	}
 
 	public function TotalCommissions($id){
@@ -636,6 +638,7 @@ $description = "Dashboard for trading platform for bitcoin exchange in United Ki
 				))
 			)
 		));
+
 	return $YourOrders;
 	
 	}

@@ -1,5 +1,5 @@
 <div class="col-md-4">
-	<div class="panel panel-default">
+	<div class="panel panel-info">
 		<div class="panel-heading">
 		<h2 class="panel-title" style="cursor:pointer;font-weight:bold" onclick="document.getElementById('Graph').style.display='block';"><?=$t('Sell')?> <?=$first_curr?> <?=$t("get")?> <?=$second_curr?> <i class="glyphicon glyphicon-indent-left"></i></h2>
 		</div>
@@ -13,11 +13,11 @@
 <input type="hidden" id="Action" name="Action" value="Sell">								
 <table class="table table-condensed">
 	<tr>
-		<td><?=$t('Your balance')?>:<br>
-		<span class="btn btn-info " style="width:80%"><span id="BalanceFirst"><?=$BalanceFirst?></span> <?=$first_curr?></span>
+		<td width="50%"><?=$t('Your balance')?>:<br>
+		<span class="btn btn-info btn-block" ><span id="BalanceFirst"><?=$BalanceFirst?></span> <?=$first_curr?></span>
 		</td>
 		<td><?=$t('Highest Bid Price')?><br>
-		<span class="btn btn-success " style="width:80%"><span id="HighestBidPrice">0</span> <?=$second_curr?></span>
+		<span class="btn btn-success btn-block"><span id="HighestBidPrice">0</span> <?=$second_curr?></span>
 		</td>
 	</tr>
 	<tr>
@@ -44,8 +44,8 @@
 		<td colspan="2" style="height:50px "><span id="SellSummary"><?=$t('Summary of your order')?></span></td>
 	</tr>
 	<tr>
-		<td><input type="button" onClick="SellFormCalculate()" class="btn btn-warning" value="Calculate"></td>
-		<td><input type="submit" id="SellSubmitButton" class="btn btn-primary" disabled="disabled" value="Submit"></td>
+		<td><input type="button" onClick="SellFormCalculate()" class="btn btn-warning btn-block" value="Calculate"></td>
+		<td><input type="submit" id="SellSubmitButton" class="btn btn-primary btn-block" disabled="disabled" value="Submit" onClick='$("#SellSubmitButton").attr("disabled", "disabled");'></td>
 	</tr>
 </table>
 <?=$this->form->end(); ?>

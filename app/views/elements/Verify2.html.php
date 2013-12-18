@@ -1,7 +1,7 @@
 	<div class="col-md-4">
-		<div class="panel panel-default" style="min-height:350px ">
+		<div class="panel panel-danger" style="min-height:350px ">
 			<div class="panel-heading">
-			<h2 class="panel-title"  style="cursor:pointer;font-weight:bold" onclick="document.getElementById('Graph').style.display='block';">No funds in <?=$first_curr?>  
+			<h2 class="panel-title"  style="cursor:pointer;font-weight:bold" onclick="document.getElementById('Graph').style.display='block';">No funds in <?=$first_curr?> / Verification 
 <i class="glyphicon glyphicon-indent-left"></i></h2>
 			</div>
 <table class="table table-condensed" height:"334px">
@@ -26,7 +26,7 @@
 
 				if(strlen($details[$documents['id'].'.verified'])==0){
 
-						$alldocuments[$documents['id']]="";
+						$alldocuments[$documents['id']]="No";
 				?>
 	<tr>
 		<td colspan="2">
@@ -34,7 +34,7 @@
 	</td>
 		</tr>
 					<?php }elseif($details[$documents['id'].'.verified']=='No'){
-							$alldocuments[$documents['id']]="Yes";
+							$alldocuments[$documents['id']]="Pending";
 					?>
 	<tr>
 		<td colspan="2">
@@ -53,6 +53,13 @@
 			}
 			$i++;
 		}
+	$all = false;
+		foreach($alldocuments as $key=>$val){						
+			if($val=='Yes'){
+			$all = true;
+			}
+		}
+		if($all){
 
 		?>
 	<tr>
@@ -65,6 +72,7 @@
 	<tr>
 		<td colspan="2">		<a href="/users/funding_fiat" class="btn btn-primary"><?=$t("Funding Fiat")?></a></td>	
 	</tr>
+<?php }?>	
 </table>			
 	</div>
 </div>

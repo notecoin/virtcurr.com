@@ -70,15 +70,15 @@ function handleFiles(f)
 	
 function read(a)
 {
- $("#bitcoinaddress").val(a);
+ $("#litecoinaddress").val(a);
  $("#SendAddress").html(a); 
- $("#bitcoinaddress").addClass("Address_success");
- $("#bitcoinAddressWindow").hide();
+ $("#litecoinaddress").addClass("Address_success");
+ $("#litecoinaddressWindow").hide();
 }	
 	
 function loadDiv()
 {
-	$("#bitcoinAddressWindow").show();
+	$("#litecoinaddressWindow").show();
 	initCanvas(300,200);
 	qrcode.callback = read;
 	qrcode.decode("");
@@ -133,11 +133,11 @@ function initCanvas(ww,hh)
 
 </script>
 <br>
-<h4>Funding - BTC </h4>
+<h4>Funding - LTC </h4>
 
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h3 class="panel-title">BTC - Deposit / Withdrawal</h3>
+    <h3 class="panel-title">LTC - Deposit / Withdrawal</h3>
   </div>
   <div class="panel-body">
 		<div class="row">
@@ -145,15 +145,15 @@ function initCanvas(ww,hh)
 			<div class="col-md-6">
 				<div class="panel panel-success">
 					<div class="panel-heading">
-						<h3 class="panel-title">Deposit BTC</h3>
+						<h3 class="panel-title">Deposit LTC</h3>
 					</div>
 					<div class="panel-body">
 							<table class="table table-condensed table-bordered table-hover">
 								<tr style="background-color:#CFFDB9">
-									<td><?=$t("Bitcoin Address")?></td>
+									<td><?=$t("Litecoin Address")?></td>
 								</tr>
 								<tr>
-									<td><?=$t("To add bitcoins please send payment to: ")?><strong><?=$address?></strong></td>
+									<td><?=$t("To add litecoins please send payment to: ")?><strong><?=$address?></strong></td>
 								</tr>
 								<tr>
 								<?php	$qrcode->png($address, QR_OUTPUT_DIR.$address.'.png', 'H', 7, 2);?>
@@ -171,29 +171,29 @@ function initCanvas(ww,hh)
 			<div class="col-md-6">
 				<div class="panel panel-warning">
 					<div class="panel-heading">
-						<h3 class="panel-title">Withdraw BTC</h3>
+						<h3 class="panel-title">Withdraw LTC</h3>
 					</div>
 					<div class="panel-body">
 							<table class="table table-condensed table-bordered table-hover">
 								<tr style="background-color: #FEECE0">
-									<td><?=$t('Bitcoin balance')?></td>
+									<td><?=$t('Litecoin balance')?></td>
 								</tr>
 								<tr>
-									<td><strong><?=number_format($details['balance.BTC'],8)?> BTC</strong><br><br></td>
+									<td><strong><?=number_format($details['balance.LTC'],8)?> LTC</strong><br><br></td>
 								</tr>
 								<tr>
 									<td style="height:280px ">
-										<form action="/users/paymentbtcverify/" method="post">
+										<form action="/users/paymentltcverify/" method="post">
 
-										<label for="bitcoinaddress">Bitcoin Address</label>
+										<label for="litecoinaddress">Litecoin Address</label>
 									<div class="input-group">										
-				<input type="text" name="bitcoinaddress" id="bitcoinaddress" placeholder="15AXfnf7hshkwgzA8UKvSyjpQdtz34H9LE" class="form-control" title="To Address" data-content="This is the Bitcoin Address of the recipient." value="" onblur="BitCoinAddress();"/>
+				<input type="text" name="litecoinaddress" id="litecoinaddress" placeholder="L5AXfnf7hshkwgzA8UKvSyjpQdtz34H9LE" class="form-control" title="To Address" data-content="This is the Litecoin Address of the recipient." value="" onblur="litecoinAddress();"/>
 									<span class="input-group-addon"><a href="#" onclick="loadDiv();"><i class="glyphicon glyphicon-qrcode tooltip-x" rel="tooltip-x" data-placement="top" title="Scan using your webcam"></i></a></span></div>
 
 
-									<small class="help-block">Enter The Bitcoin Address of the Recipient</small>
+									<small class="help-block">Enter The Litecoin Address of the Recipient</small>
 				
-									<div id="bitcoinAddressWindow" style="display:none;border:1px solid gray;padding:2px;width:304px;text-align:center ">
+									<div id="litecoinaddressWindow" style="display:none;border:1px solid gray;padding:2px;width:304px;text-align:center ">
 									<object  id="iembedflash" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,0,0" width="300" height="200">
 									<param name="movie" value="/js/qrcode/camcanvas.swf" />
 									<param name="quality" value="high" />
@@ -205,37 +205,37 @@ function initCanvas(ww,hh)
 									</div>
 				
 									<?php
-									$max = (float)$details['balance.BTC'];
+									$max = (float)$details['balance.LTC'];
 									?>
 											<?=$this->form->field('amount', array('label'=>'Amount', 'placeholder'=>'0.0', 'class'=>'form-control', 'max'=>$max,'min'=>'0.001','onFocus'=>'SuccessButtonDisable();','maxlenght'=>10)); ?>
 											<input type="hidden" id="maxValue" value="<?=$max?>" name="maxValue">
 											<input type="hidden" id="txFee" value="<?=$txfee?>" name="txFee">							<br>
 											<input type="hidden" id="TransferAmount" value="0" name="TransferAmount" onFocus="SuccessButtonDisable()">											
 											
-											<div class="alert alert-warning" id="BTCAlert" style="display:none"></div>
+											<div class="alert alert-warning" id="LTCAlert" style="display:none"></div>
 											<div id="SendCalculations">
 												<table class="table table-condensed table-bordered table-hover">
 													<tr>
 														<th width="30%">Send to:</th>
-														<td id="SendAddress"></td>
+														<td id="SendLTCAddress"></td>
 													</tr>
 													<tr>
 														<th>Total Amount:</th>
-														<td id="SendAmount"></td>
+														<td id="SendLTCAmount"></td>
 													</tr>
 													<tr>
 														<th>Transaction Fees:<br>
 														<small>to miners</small></th>
-														<td id="SendFees"></td>
+														<td id="SendLTCFees"></td>
 													</tr>
 													<tr>
 														<th>Amount You Receive:</th>
-														<th id="SendTotal"></th>
+														<th id="SendLTCTotal"></th>
 													</tr>
 												</table>
 											</div>
-											<input type="button" value="Calculate" class="btn btn-primary" onclick="return CheckPayment();">
-											<input type="submit" value="Send" class="btn btn-success" onclick="return CheckPayment();" disabled="disabled" id="SendSuccessButton"> 
+											<input type="button" value="Calculate" class="btn btn-primary" onclick="return CheckLTCPayment();">
+											<input type="submit" value="Send" class="btn btn-success" onclick="return CheckLTCPayment();" disabled="disabled" id="SendLTCSuccessButton"> 
 											
 										</form>
 									</td>

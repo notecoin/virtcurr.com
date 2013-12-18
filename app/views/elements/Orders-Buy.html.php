@@ -1,5 +1,5 @@
 	<div class="col-md-4">
-		<div class="panel panel-default">
+		<div class="panel panel-success">
 			<div class="panel panel-heading">
 			<h2 class="panel-title"  style="font-weight:bold"  href="#"><?=$t('Orders:')?>
 			 <?=$t('Buy')?> <?=$first_curr?> &lt; <?=$second_curr?></h2>

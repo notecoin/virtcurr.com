@@ -41,7 +41,9 @@
 				<th colspan="3">Actions</th>
 			</tr>
 			<?php
-			foreach ($Companies as $cc){?>
+			foreach ($Companies as $cc){
+			if($cc['Active']){
+			?>
 			<tr>
 				<td><?=$cc['CompanyName']?></td>
 				<td><a href="<?=BASE_SECURE?><?=$cc['subname']?>.<?=TL_DOMAIN?>"><?=$cc['subname']?>.<?=COMPANY_URL?></a></td>				
@@ -49,9 +51,20 @@
 				<td><a href="<?=BASE_SECURE?><?=$cc['subname']?>.<?=TL_DOMAIN?>/signup" class="btn btn-success btn-sm">Sign up</a></td>
 				<td><a href="<?=BASE_SECURE?><?=$cc['subname']?>.<?=TL_DOMAIN?>/admin" class="btn btn-danger btn-sm">Admin</a></td>
 			</tr>
-			<?php }?>
+			<?php 
+			}else{
+			?>
+			<tr>
+				<td><?=$cc['CompanyName']?></td>
+				<td colspan="2">The company is still not active. We are waiting for identification / documents to be verified. Please visit again! 
+If you are the owner of this company please <a href="<?=BASE_SECURE?><?=$cc['subname']?>.<?=TL_DOMAIN?>/signin"  class="label label-primary">signin</a>
+				</td>
+			</tr>
+			<?php
+			}
+			}?>
 		</table>
-		<p>If you would like to register a company which will be allowed to do virtual currency trading by your country laws and are willing to submit the documents for verification, then <a href="<?=BASE_SECURE?><?=$cc['subname']?>.<?=TL_DOMAIN?>/Companies/register" class="label label-primary">Register</a>.</p>
+		<p>If you would like to register a company which will be allowed to do virtual currency trading by your country laws and are willing to submit the documents for verification, then <a href="<?=BASE_SECURE?><?=$cc['CompanyISO']?>.<?=TL_DOMAIN?>/Companies/register" class="label label-primary">Register</a>.</p>
 		<?php }?>
 	</div>
 </div>

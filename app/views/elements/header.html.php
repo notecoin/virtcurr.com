@@ -1,8 +1,19 @@
 <?php
 use lithium\storage\Session;
 use app\extensions\action\Functions;
+use app\models\Settings;
+use app\models\Details;
+$user = Session::read('member');
+$settings = Settings::find('first',array(
+	'conditions'=>array('subname'=>SUBDOMAIN)
+));
+$id = $user['_id'];
+$details = Details::find('first',
+	array('conditions'=>array('user_id'=>$id))
+);
+
 ?>
-<?php $user = Session::read('member'); ?>
+
 <!-- Fixed navbar -->
 <div class="navbar navbar-default navbar-fixed-top">
 	<div class="container">
@@ -29,17 +40,30 @@ use app\extensions\action\Functions;
 			<?=$user['username']?> <i class='glyphicon glyphicon-chevron-down'></i>
 			</a>
 			<ul class="dropdown-menu">
-				<?php if($user['admin']==1){
-				?>
+				<?php if($user['admin']==1){?>
 				<li><a href="<?=BASE_HOST?>/<?=LOCALE?>/admin/index"><?=$t('Administor')?></a></li>			
-				<?php
-				}?>
+				<?php	}?>
 				<li><a href="<?=BASE_HOST?>/<?=LOCALE?>/users/settings"><?=$t('Settings')?></a></li>			
 				<li><a href="<?=BASE_HOST?>/<?=LOCALE?>/ex/dashboard"><?=$t('Dashboard')?></a></li>
+<?php foreach($settings['documents'] as $documents){
+				if($documents['required']==true){
+					if(strlen($details[$documents['id'].'.verified'])==0){
+							$alldocuments[$documents['id']]="No";
+					}elseif($details[$documents['id'].'.verified']=='No'){
+							$alldocuments[$documents['id']]="Pending";
+					}else{
+							$alldocuments[$documents['id']]="Yes";						
+					}
+				}
+			}
+if($alldocuments['government']=="Yes" && $alldocuments['bank']=="Yes" && $alldocuments['address']=="Yes"){
+			?>
 				<li class="divider"></li>				
 				<li><a href="<?=BASE_HOST?>/<?=LOCALE?>/users/funding_btc"><?=$t('Funding BTC')?></a></li>							
 				<li><a href="<?=BASE_HOST?>/<?=LOCALE?>/users/funding_ltc"><?=$t('Funding LTC')?></a></li>											
 				<li><a href="<?=BASE_HOST?>/<?=LOCALE?>/users/funding_fiat"><?=$t('Funding Fiat')?></a></li>											
+				
+<?php }?>				
 				<li class="divider"></li>
 				<li><a href="<?=BASE_HOST?>/<?=LOCALE?>/signout"><?=$t('Logout')?></a></li>
 			</ul>

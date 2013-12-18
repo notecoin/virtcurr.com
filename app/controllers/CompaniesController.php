@@ -2,7 +2,9 @@
 namespace app\controllers;
 use app\models\Countries;
 use app\models\Commissions;
+use app\models\Limits;
 use app\models\Documents;
+use app\models\Denominations;
 use app\models\Ipaddresses;
 use app\models\Companies;
 use app\models\Settings;
@@ -71,6 +73,7 @@ class CompaniesController extends \lithium\action\Controller {
 					));
 					$CurrencyCode = $countries['CurrencyCode'];
 					$CurrencyName = $countries['CurrencyName'];
+					$CompanyISO = $this->request->data['CompanyISO'];
 					$data = array(
 						'subname'	=>	$this->request->data['subname'],
 						'username'	=>	$this->request->data['subname'],
@@ -113,27 +116,27 @@ class CompaniesController extends \lithium\action\Controller {
 						'trade' => 'BTC/USD',
 						'First' => 'Bitcoin',
 						'Second' => 'Dollar',
-						'active'=> true,						
+						'active'=> false,						
 					),					
 					array(
 						'refresh' => false,
 						'trade' => 'LTC/USD',
 						'First' => 'Litecoin',
 						'Second' => 'Dollar',
-						'active'=> true,						
+						'active'=> false,						
 					),					
 					array(
 						'refresh' => false,
 						'trade' => 'BTC/'.$CurrencyCode,
 						'First' => 'Bitcoin',
-						'Second' => $CurrencyName,
+						'Second' => strtoupper($CompanyISO)."-".$CurrencyName,
 						'active'=> true,						
 					),					
 					array(
 						'refresh' => false,
 						'trade' => 'LTC/'.$CurrencyCode,
 						'First' => 'Litecoin',
-						'Second' => $CurrencyName,
+						'Second' => strtoupper($CompanyISO)."-".$CurrencyName,
 						'active'=> true,						
 					),										
 				);
@@ -148,20 +151,45 @@ class CompaniesController extends \lithium\action\Controller {
 					$commdata[$i]['percent'] = $comm['percent'];					
 				$i++;
 				}
+				$commdata[$i]['base'] = (float)0.1;
 				$documents = Documents::find('all');
 				$i = 0;
 				$docudata = array();
 				foreach($documents as $docu){
 					$docudata[$i]['name'] = $docu['name'];
-					$docudata[$i]['required'] = $docu['required'];
+					$docudata[$i]['required'] = (boolean)$docu['required'];
 					$docudata[$i]['alias'] = $docu['alias'];										
 					$docudata[$i]['id'] = $docu['id'];															
 					$i++;
 				}
+				$denominations = Denominations::find('all');
+				$i = 0;
+				$denodata = array();
+				foreach($denominations as $deno){
+					$denodata[$i]['name'] = $deno['name'];
+					$denodata[$i]['value'] = (float) $deno['value'];
+					$denodata[$i]['active'] = (boolean)$deno['active'];					
+					$i++;
+				}
 				$txfees = array(
-					'BTC' => 0.0005,
-					'LTC' => 0.0001
+					array('name'=>'BTC','fee' => 0.0005),
+					array('name'=>'LTC','fee' => 0.0001)
 				);
+				$limits = Limits::find('all');
+				$limitdata = array();
+				$i = 0;
+				foreach($limits as $limit){
+					$limitdata[$i]['name'] = $limit['name'];
+					$limitdata[$i]['deposit'] = (float)$limit['deposit'];
+					$limitdata[$i]['withdrawal'] = (float)$limit['withdrawal'];
+					$limitdata[$i]['allow'] = (boolean)$limit['allow'];					
+					$i++;
+				}
+					$limitdata[$i]['name'] = $CurrencyCode;
+					$limitdata[$i]['deposit'] = (float)0;
+					$limitdata[$i]['withdrawal'] = (float)0;
+					$limitdata[$i]['allow'] = (boolean)true;					
+				
 					$data = array(
 						'company_id'=>(string)$Companies->_id,
 						'subname'=>(string)$Companies->subname,
@@ -175,6 +203,8 @@ class CompaniesController extends \lithium\action\Controller {
 						'commissions'=>$commdata,
 						'documents'=>$docudata,
 						'txfees'=> $txfees,
+						'limits'=>$limitdata,
+						'denominations'=>$denodata,
 					);
 					Settings::create()->save($data);
 					

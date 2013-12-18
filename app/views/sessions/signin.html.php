@@ -74,7 +74,7 @@
 				<h3 class="panel-title">Sign up / Register</h3>
 			</div>
 			<div class="panel-body">
-		Don't have an account. <a href="/users/signup" class="btn btn-primary">Signup</a><br>
+		Don't have an account. <a href="/users/signup" class="btn btn-primary">Sign up</a><br>
 		Please read the <a href="/company/termsofservice">terms of service</a> page before you sign up.<br>
 		<h3>Security</h3>
 		We use <strong>Two Factor Authentication</strong> for your account to login to <?=COMPANY_URL?>.<br>
