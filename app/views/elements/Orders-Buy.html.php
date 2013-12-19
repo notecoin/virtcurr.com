@@ -27,8 +27,8 @@
 					<?php 
 					$BuyOrderAmount = 0;
 					foreach($BuyOrders['result'] as $BO){
-						$BuyOrderPrice = number_format(round($BO['_id']['PerPrice'],8),8);
-						$BuyOrderAmount = $BuyOrderAmount + number_format(round($BO['Amount'],8),8);
+						$BuyOrderPrice = round($BO['_id']['PerPrice'],8);
+						$BuyOrderAmount = $BuyOrderAmount + round($BO['Amount'],8);
 					
 					?>
 					<tr onClick="BuyOrderFill(<?=$BuyOrderPrice?>,<?=$BuyOrderAmount?>);" style="cursor:pointer" 

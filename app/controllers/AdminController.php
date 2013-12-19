@@ -60,6 +60,7 @@ class AdminController extends \lithium\action\Controller {
 		$settings = Settings::find('first',array(
 			'conditions'=>array('subname'=>$user['subname'])
 		));
+
 		$subname = $user['subname'];
 
 			if($this->request->data){
@@ -268,8 +269,8 @@ class AdminController extends \lithium\action\Controller {
 						array('address.verified'=>''),
 						array('government.verified'=>''),
 						array('bank.verified'=>'')	
-					)
-					
+					),
+						'subname'=>$subname,					
 				)
 				));
 			}

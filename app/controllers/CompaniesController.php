@@ -74,9 +74,12 @@ class CompaniesController extends \lithium\action\Controller {
 					$CurrencyCode = $countries['CurrencyCode'];
 					$CurrencyName = $countries['CurrencyName'];
 					$CompanyISO = $this->request->data['CompanyISO'];
+
+					$usercode = gmdate('ymdHis',time());
 					$data = array(
 						'subname'	=>	$this->request->data['subname'],
 						'username'	=>	$this->request->data['subname'],
+						'usercode' => $usercode,
 						'password'	=>	$this->request->data['password'],
 						'password2'	=>	$this->request->data['password2'],					
 						'firstname'	=>	$this->request->data['firstname'],
@@ -86,7 +89,7 @@ class CompaniesController extends \lithium\action\Controller {
 					);
 				$User = Users::create($data);
 				$saved = $User->save();
-	
+
 				$data = array(
 					'user_id'=>(string)$User->_id,
 					'username'=>$this->request->data['subname'],
@@ -99,7 +102,8 @@ class CompaniesController extends \lithium\action\Controller {
 					'balance.BTC' => (float)0,
 					'balance.LTC' => (float)0,				
 					'balance.USD' => (float)0,									
-					'balance.'.$CurrencyCode => (float)0
+					'balance.'.$CurrencyCode => (float)0,
+					'usercode'=>$usercode,
 				);
 				Details::create()->save($data);
 	
@@ -189,7 +193,9 @@ class CompaniesController extends \lithium\action\Controller {
 					$limitdata[$i]['deposit'] = (float)0;
 					$limitdata[$i]['withdrawal'] = (float)0;
 					$limitdata[$i]['allow'] = (boolean)true;					
-				
+					$friends = array(
+						'allow'=>true
+					);
 					$data = array(
 						'company_id'=>(string)$Companies->_id,
 						'subname'=>(string)$Companies->subname,
@@ -205,6 +211,7 @@ class CompaniesController extends \lithium\action\Controller {
 						'txfees'=> $txfees,
 						'limits'=>$limitdata,
 						'denominations'=>$denodata,
+						'friends'=>$friends,
 					);
 					Settings::create()->save($data);
 					

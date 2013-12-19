@@ -378,7 +378,6 @@ class UsersController extends \lithium\action\Controller {
 	//			$oauth = new OAuth2();
 	//			$key_secret = $oauth->request_token();
 				$ga = new GoogleAuthenticator();
-				
 				$data = array(
 					'user_id'=>(string)$Users->_id,
 					'username'=>(string)$Users->username,
@@ -393,7 +392,8 @@ class UsersController extends \lithium\action\Controller {
 					'balance.BTC' => (float)0,
 					'balance.LTC' => (float)0,				
 					'balance.USD' => (float)0,									
-					'balance.'.$CurrencyCode => (float)0
+					'balance.'.$CurrencyCode => (float)0,
+					'usercode'=>$Users->usercode,
 				);
 				Details::create()->save($data);
 	

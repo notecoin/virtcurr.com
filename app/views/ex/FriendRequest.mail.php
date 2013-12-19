@@ -2,7 +2,7 @@
 		<img src="https://<?=COMPANY_URL?>/img/<?=COMPANY_URL?>.gif" alt="<?=COMPANY_URL?>">
 	</div>
 	<h4>Hi <?=$sendUserName?>,</h4>
-<p>Your friend <?=$order['username']?>, has placed an order at <?=COMPANY_URL?>.</p>
+<p>Your friend <?=$order['usercode']?>, has placed an order at <?=COMPANY_URL?>.</p>
 <table border="1">
 	<tr>
 		<td>Action</td>

@@ -226,5 +226,19 @@ class CompanyController extends \lithium\action\Controller {
 		$this->redirect('users::settings');
 	}
 
+	public function friends(){
+		$user = Session::read('default');
+		if ($user==""){		return $this->redirect('Users::index');}		
+		$friends = array();
+		$data = array(
+			'friends'=> array('allow'=>(boolean)$this->request->data['allow'])
+		);
+		$settings = Settings::find('all',array(
+			'conditions'=>array('subname'=>$user['subname'])
+		))->save($data);
+		$this->redirect('users::settings');
+	
+	}
+
 }
 ?>

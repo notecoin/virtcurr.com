@@ -3,7 +3,7 @@
 		<div class="panel-heading">
 		<h2 class="panel-title" style="cursor:pointer;font-weight:bold" onclick="document.getElementById('Graph').style.display='block';"><?=$t('Sell')?> <?=$first_curr?> <?=$t("get")?> <?=$second_curr?> <i class="glyphicon glyphicon-indent-left"></i></h2>
 		</div>
-<?=$this->form->create(null); ?>		
+<?=$this->form->create(null,array('id'=>'SellForm')); ?>		
 <input type="hidden" id="SellFirstCurrency" name="SellFirstCurrency" value="<?=$first_curr?>">
 <input type="hidden" id="SellSecondCurrency" name="SellSecondCurrency" value="<?=$second_curr?>">		
 <input type="hidden" id="SellCommission" name="SellCommission" value="0">				
@@ -45,7 +45,7 @@
 	</tr>
 	<tr>
 		<td><input type="button" onClick="SellFormCalculate()" class="btn btn-warning btn-block" value="Calculate"></td>
-		<td><input type="submit" id="SellSubmitButton" class="btn btn-primary btn-block" disabled="disabled" value="Submit" onClick='$("#SellSubmitButton").attr("disabled", "disabled");'></td>
+		<td><input type="submit" id="SellSubmitButton" class="btn btn-primary btn-block" disabled="disabled" value="Submit" onClick='$("#SellSubmitButton").attr("disabled", "disabled");$("#SellForm").submit();'></td>
 	</tr>
 </table>
 <?=$this->form->end(); ?>

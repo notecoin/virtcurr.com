@@ -28,8 +28,8 @@
 					<?php 
 					$SellOrderAmount = 0;
 					foreach($SellOrders['result'] as $SO){
-						$SellOrderPrice = number_format(round($SO['_id']['PerPrice'],8),8);
-						$SellOrderAmount = $SellOrderAmount + number_format(round($SO['Amount'],8),8);
+						$SellOrderPrice = round($SO['_id']['PerPrice'],8);
+						$SellOrderAmount = $SellOrderAmount + round($SO['Amount'],8);
 					?>
 					<tr onClick="SellOrderFill(<?=$SellOrderPrice?>,<?=$SellOrderAmount?>);"  style="cursor:pointer" 
 					 class=" tooltip-x" rel="tooltip-x" data-placement="top" title="Buy <?=$SellOrderAmount?> <?=$first_curr?> at <?=$SellOrderPrice?> <?=$second_curr?>">

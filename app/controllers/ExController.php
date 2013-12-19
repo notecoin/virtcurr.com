@@ -122,6 +122,7 @@ class ExController extends \lithium\action\Controller {
 				'Completed' => 'N',
 				'IP' => $_SERVER['REMOTE_ADDR'],
 				'username' => $user['username'],
+				'usercode' => $user['usercode'],				
 				'user_id' => $user['_id'],
 			);
 					// Create Order for the user
@@ -137,8 +138,9 @@ class ExController extends \lithium\action\Controller {
 			))->save($data);
 			
 			$this->SendEmails($order_id,$user['_id']);
-//			$this->SendFriendsEmails($order_id,$user['_id']);			
-
+			if($settings['friends']['allow']==true){
+				$this->SendFriendsEmails($order_id,$user['_id']);			
+			}
 			$PendingOrders = Orders::find('all',
 				array(
 					'conditions'=> array(
@@ -158,6 +160,7 @@ class ExController extends \lithium\action\Controller {
 							'Completed' => 'Y',
 							'Transact.id'=> $order_id,
 							'Transact.username' => $user['username'],
+							'Transact.usercode' => $user['usercode'],							
 							'Transact.user_id' => $user['_id'],
 							'Transact.DateTime' => new \MongoDate(),
 						);
@@ -173,6 +176,7 @@ class ExController extends \lithium\action\Controller {
 							'Completed' => 'Y',
 							'Transact.id'=> $PO['_id'],
 							'Transact.username' => $PO['username'],
+							'Transact.usercode' => $PO['usercode'],														
 							'Transact.user_id' => $PO['user_id'],
 							'Transact.DateTime' => new \MongoDate(),														
 						);
@@ -207,6 +211,7 @@ class ExController extends \lithium\action\Controller {
 							'Completed' => 'Y',
 							'Transact.id'=> $order_id,
 							'Transact.username' => $user['username'],
+							'Transact.usercode' => $user['usercode'],														
 							'Transact.user_id' => $user['_id'],
 							'Transact.DateTime' => new \MongoDate(),														
 							'Order'=>'P>C: Update Previous Commission and Amount and Complete Order'							
@@ -249,6 +254,7 @@ class ExController extends \lithium\action\Controller {
 							'Completed' => 'Y',
 							'Transact.id'=> $PO['_id'],
 							'Transact.username' => $PO['username'],
+							'Transact.usercode' => $PO['usercode'],														
 							'Transact.user_id' => $PO['user_id'],
 							'Transact.DateTime' => new \MongoDate(),														
 							'Order'=>'P>C: Update current order no change in commission or amount'							
@@ -290,6 +296,7 @@ class ExController extends \lithium\action\Controller {
 							'Completed' => 'Y',
 							'Transact.id'=> $order_id,
 							'Transact.username' => $user['username'],
+							'Transact.usercode' => $user['usercode'],							
 							'Transact.user_id' => $user['_id'],
 							'Transact.DateTime' => new \MongoDate(),														
 							'Order'=>'P<C: Update Previous Record'
@@ -311,6 +318,7 @@ class ExController extends \lithium\action\Controller {
 							'Completed' => 'Y',
 							'Transact.id'=> $PO['_id'],
 							'Transact.username' => $PO['username'],
+							'Transact.usercode' => $PO['usercode'],														
 							'Transact.user_id' => $PO['user_id'],
 							'Transact.DateTime' => new \MongoDate(),														
 							'Order'=>'P<C: Update current record'							
@@ -360,7 +368,7 @@ class ExController extends \lithium\action\Controller {
 		$details = Details::find('first',
 			array('conditions'=>array('user_id'=>$id))
 		);
-		
+		//common functions without POST
 		$mongodb = Connections::get('default')->connection;
 		$TotalSellOrders = Orders::connection()->connection->command(array(
 			'aggregate' => 'orders',
@@ -370,6 +378,7 @@ class ExController extends \lithium\action\Controller {
 					'Action' => '$Action',
 					'Amount'=>'$Amount',
 					'Completed'=>'$Completed',					
+					'subname'=>'$subname',
 					'FirstCurrency'=>'$FirstCurrency',
 					'SecondCurrency'=>'$SecondCurrency',	
 					'TotalAmount' => array('$multiply' => array('$Amount','$PerPrice')),
@@ -377,6 +386,7 @@ class ExController extends \lithium\action\Controller {
 				array('$match'=>array(
 					'Action'=>'Sell',
 					'Completed'=>'N',					
+					'subname'=>$user['subname'],
 					'FirstCurrency' => $first_curr,
 					'SecondCurrency' => $second_curr,					
 					)),
@@ -397,13 +407,15 @@ class ExController extends \lithium\action\Controller {
 					'Action' => '$Action',
 					'Amount'=>'$Amount',
 					'Completed'=>'$Completed',
+					'subname'=>'$subname',					
 					'FirstCurrency'=>'$FirstCurrency',
 					'SecondCurrency'=>'$SecondCurrency',					
 					'TotalAmount' => array('$multiply' => array('$Amount','$PerPrice')),					
 				)),
 				array('$match'=>array(
 					'Action'=>'Buy',
-					'Completed'=>'N',										
+					'Completed'=>'N',	
+					'subname'=>$user['subname'],					
 					'FirstCurrency' => $first_curr,
 					'SecondCurrency' => $second_curr,					
 					)),
@@ -425,6 +437,7 @@ class ExController extends \lithium\action\Controller {
 					'Action' => '$Action',
 					'Amount'=>'$Amount',
 					'user_id' => '$user_id',
+					'subname'=>'$subname',					
 					'PerPrice'=>'$PerPrice',
 					'Completed'=>'$Completed',
 					'FirstCurrency'=>'$FirstCurrency',
@@ -433,6 +446,7 @@ class ExController extends \lithium\action\Controller {
 				array('$match'=>array(
 					'Action'=>'Sell',
 					'Completed'=>'N',										
+					'subname'=>$user['subname'],										
 					'FirstCurrency' => $first_curr,
 					'SecondCurrency' => $second_curr,					
 					)),
@@ -455,6 +469,7 @@ class ExController extends \lithium\action\Controller {
 					'_id'=>0,
 					'Action' => '$Action',
 					'user_id' => '$user_id',					
+					'subname'=>'$subname',										
 					'Amount'=>'$Amount',
 					'PerPrice'=>'$PerPrice',
 					'Completed'=>'$Completed',
@@ -464,6 +479,7 @@ class ExController extends \lithium\action\Controller {
 				array('$match'=>array(
 					'Action'=>'Buy',
 					'Completed'=>'N',
+					'subname'=>$user['subname'],					
 					'FirstCurrency' => $first_curr,
 					'SecondCurrency' => $second_curr,					
 					)),
@@ -887,8 +903,9 @@ $description = "";
 			'pipeline' => array( 
 				array( '$project' => array(
 					'_id'=>0,
-					'user_id' => '$user_id',					
+					'user_id' => '$user_id',
 					'TransactUsername'=>'$Transact.username',
+					'TransactUsercode'=>'$Transact.usercode',					
 					'TransactUser_id'=>'$Transact.user_id',
 					'TransactDateTime'=>'$Transact.DateTime',
 					'Completed'=>'$Completed',
@@ -899,19 +916,20 @@ $description = "";
 					)),
 				array('$group' => array( '_id' => array(
 						'TransactUsername'=>'$TransactUsername',						
+						'TransactUsercode'=>'$TransactUsercode',											
 						'TransactUser_id'=>'$TransactUser_id',						
 						),
 						)),
 				array('$sort'=>array(
-					'TransactUsername'=>1,
+					'TransactUsercode'=>1,
 				)),
-				array('$limit'=>20)
+//				array('$limit'=>20)
 			)
 		));
 	return $RequestFriend;
 	}
 	
-	public function AddFriend($hashuser_id,$user_id,$username){
+	public function AddFriend($hashuser_id,$user_id,$usercode){
 		if(String::hash($user_id)==$hashuser_id){
 			$user = Session::read('member');
 			$id = $user['_id'];
@@ -926,7 +944,7 @@ $description = "";
 					array_push($addfriend, $ra);
 				}
 			}
-			array_push($addfriend,$username);
+			array_push($addfriend,$usercode);
 			$data = array('Friend'=>$addfriend);
 //			print_r($data);
 			$details = Details::find('first',
@@ -936,7 +954,7 @@ $description = "";
 		$this->redirect(array('controller'=>'ex','action'=>"dashboard/",'locale'=>$locale));				
 	}
 	
-	public function RemoveFriend($hashuser_id,$user_id,$username){
+	public function RemoveFriend($hashuser_id,$user_id,$usercode){
 		if(String::hash($user_id)==$hashuser_id){
 			$user = Session::read('member');
 			$id = $user['_id'];
@@ -948,7 +966,7 @@ $description = "";
 			$addfriend = array();
 			if(count($friends)!=0){
 				foreach ($friends as $ra){
-					if($ra!=$username){
+					if($ra!=$usercode){
 						array_push($addfriend, $ra);
 					}
 				}
@@ -1041,13 +1059,13 @@ $description = "";
 		}
 //		print_r($friends);
 		$usersToSend = Users::find('all',array(
-			'conditions' => array('username'=>array('$in'=>$friends)),
+			'conditions' => array('usercode'=>array('$in'=>$friends)),
 			'fields'=>array('email', 'username')
 		));
 		foreach($usersToSend as $userToSend){
 				$sendEmailTo = $userToSend['email'];
 				$sendUserName = $userToSend['username'];
-
+				$sendUserCode = $userToSend['usercode'];
 //*****************************************************************************
 //*****************************************************************************
 	
@@ -1061,7 +1079,7 @@ $description = "";
 
 		$body = $view->render(
 			'template',
-			compact('order','sendUserName'),
+			compact('order','sendUserName','sendUserCode'),
 			array(
 				'controller' => 'ex',
 				'template'=>'FriendRequest',

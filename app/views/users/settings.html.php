@@ -33,6 +33,41 @@ use li3_qrcode\extensions\action\QRcode;
     <div id="collapseCompany" class="panel-collapse <?php if($option=="company"){?><?php }else{?>collapse<?php }?>">
       <div class="panel-body">
 			<div class="row">
+				<div class="col-md-12">
+					<!--Friends-->
+					<div class="panel panel-danger">
+						<div class="panel-heading">
+							<h3 class="panel-title">Friends</h3>
+						</div>
+						<div class="panel-body">
+								<?=$this->form->create("",array('url'=>'/company/friends/')); ?>
+								<table class="table table-condensed">
+									<thead>
+										<tr>
+											<td>Name</td>
+											<td>Allow</td>
+											<td>Description</td>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>Allow
+											</td>
+											<td><input type="checkbox" name="allow" id="allow" class="form-control" <?php if($settings['friends']['allow']){echo " checked ";}?>>
+											</td>
+											<td>Allowing friends will enable users to select friends from the list of completed orders, they will receive emails, when friends post a new order. Interaction with Facebook feature.</td>
+										</tr>
+									</tbody>
+								</table>
+								<input type="submit" value="Save friends" class="btn btn-primary">
+								</form>
+						</div>
+					</div>
+					<!--Friends-->
+					</div>
+			</div>				
+			<hr>
+			<div class="row">
 				<div class="col-md-6">
 					<!--Commissions-->
 					<div class="panel panel-primary">

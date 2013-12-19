@@ -14,6 +14,7 @@
 		<?=$this->form->field('refer', array('label'=>'Refered by bitcoin address','value'=>$refer,'readonly'=>'readonly','class'=>'form-control' )); ?><br>
 		<?php }else{?>
 		<?=$this->form->field('refer', array('type'=>'hidden','value'=>'')); ?>
+		<?=$this->form->field('usercode', array('type'=>'hidden','value'=>gmdate('ymdHis',time()))); ?>		
 		<?php }?>
 		<?=$this->form->field('subname', array('type'=>'hidden','value'=>SUBDOMAIN)); ?>
 		<div class="form-group has-error">

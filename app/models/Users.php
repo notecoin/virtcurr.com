@@ -9,6 +9,7 @@ class Users extends \lithium\data\Model {
 		'_id'	=>	array('type' => 'id'),
 		'subname'	=>	array('type' => 'string', 'null' => false),
 		'username'	=>	array('type' => 'string', 'null' => false),
+		'usercode'	=>	array('type' => 'string', 'null' => false),		
 		'password'	=>	array('type' => 'string', 'null' => false),
 		'firstname'	=>	array('type' => 'string', 'null' => false),
 		'lastname'	=>	array('type' => 'string', 'null' => false),

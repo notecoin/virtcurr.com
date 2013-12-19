@@ -3,7 +3,7 @@
 			<div class="panel-heading">
 				<h2 class="panel-title"  style="cursor:pointer;font-weight:bold" onclick="document.getElementById('Graph').style.display='block';"><?=$t('Buy')?> <?=$first_curr?> <?=$t("with")?> <?=$second_curr?> <i class="glyphicon glyphicon-indent-left"></i></h2>
 			</div>
-<?=$this->form->create(null,array()); ?>
+<?=$this->form->create(null,array('id'=>'BuyForm')); ?>
 <input type="hidden" id="BuyFirstCurrency" name="BuyFirstCurrency" value="<?=$first_curr?>">
 <input type="hidden" id="BuySecondCurrency" name="BuySecondCurrency" value="<?=$second_curr?>">		
 <input type="hidden" id="BuyCommission" name="BuyCommission" value="0">
@@ -45,7 +45,7 @@
 	</tr>
 	<tr>
 		<td><input type="button" onClick="BuyFormCalculate()" class="btn btn-warning btn-block" value="Calculate"></td>
-		<td><input type="submit" id="BuySubmitButton" class="btn btn-primary btn-block" disabled="disabled" value="Submit" onClick='$("#BuySubmitButton").attr("disabled", "disabled");'></td>
+		<td><input type="submit" id="BuySubmitButton" class="btn btn-primary btn-block" disabled="disabled" value="Submit" onClick='$("#BuySubmitButton").attr("disabled", "disabled");$("#BuyForm").submit();'></td>
 	</tr>
 </table>
 <?=$this->form->end(); ?>

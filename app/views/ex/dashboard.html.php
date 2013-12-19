@@ -290,27 +290,16 @@ foreach($CompletedCommissions['result'] as $C){
 				</div>
 			</div>		
 		<!-- final summary-->		
-		</div>
-	</div>
-</div>
-
-
-<!--------
-	<div class="span5">
-		<div class="navbar">
-			<div class="navbar-inner">
-			<a class="brand" href="#"><?=$t('Users you transacted with (max 20)')?> </a>
-			</div>
-		</div>
-		<table class="table table-condensed table-bordered table-hover" style="margin-top:-20px">
-			<thead>
-				<tr>
-					<th style="text-align:center"><?=$t('User name')?></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td >
+<?php 
+if($settings['friends']['allow']==true){
+?>
+		<!-- Friends-->
+			<div class="col-md-12">
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h3 class="panel-title">Users you transacted with</h3>
+					</div>
+					<div class="panel-body">
 			<?php foreach($RequestFriends['result'] as $RF){
 			$friend = array();
 			if($details['Friend']!=""){
@@ -318,18 +307,20 @@ foreach($CompletedCommissions['result'] as $C){
 					array_push($friend, $f);
 				}
 			}
-			if(!in_array($RF['_id']['TransactUsername'],$friend,TRUE)){
-			  ?><a href="/<?=$locale?>/ex/AddFriend/<?=String::hash($RF['_id']['TransactUser_id'])?>/<?=$RF['_id']['TransactUser_id']?>/<?=$RF['_id']['TransactUsername']?>"
-				class=" tooltip-x label label-success" rel="tooltip-x" data-placement="top" title="Add to receive alerts from <?=$RF['_id']['TransactUsername']?>"
-				style="font-weight:bold "><i class="icon-plus"></i> <?=$RF['_id']['TransactUsername']?></a>
+			if(!in_array($RF['_id']['TransactUsercode'],$friend,TRUE)){
+			  ?><a href="/<?=$locale?>/ex/AddFriend/<?=String::hash($RF['_id']['TransactUser_id'])?>/<?=$RF['_id']['TransactUser_id']?>/<?=$RF['_id']['TransactUsercode']?>"
+				class=" tooltip-x label label-success" rel="tooltip-x" data-placement="top" title="Add to receive alerts from <?=$RF['_id']['TransactUsercode']?>"
+				style="font-weight:bold "><i class="glyphicon glyphicon-plus"></i> <?=$RF['_id']['TransactUsercode']?></a>
 			<?php }else{?>
-			<a  href="/<?=$locale?>/ex/RemoveFriend/<?=String::hash($RF['_id']['TransactUser_id'])?>/<?=$RF['_id']['TransactUser_id']?>/<?=$RF['_id']['TransactUsername']?>" class="tooltip-x label label-warning" rel="tooltip-x" data-placement="top" title="Already a friend <?=$RF['_id']['TransactUsername']?>, Remove!">
-<i class="icon-minus"></i>			<?=$RF['_id']['TransactUsername']?></a>
+			<a  href="/<?=$locale?>/ex/RemoveFriend/<?=String::hash($RF['_id']['TransactUser_id'])?>/<?=$RF['_id']['TransactUser_id']?>/<?=$RF['_id']['TransactUsercode']?>" class="tooltip-x label label-warning" rel="tooltip-x" data-placement="top" title="Already a friend <?=$RF['_id']['TransactUsercode']?> Remove!">
+<i class="glyphicon glyphicon-minus"></i>			<?=$RF['_id']['TransactUsercode']?></a>
 			<?php }?>
 			<?php }?>
-					</td>
-				</tr>			
-			</tbody>
-		</table>
+					</div>
+				</div>
+			</div>		
+		<!-- Friends-->		
+<?php }?>
+		</div>
 	</div>
--->	
+</div>
