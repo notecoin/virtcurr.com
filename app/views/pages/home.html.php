@@ -2,6 +2,7 @@
 use app\models\Countries;
 use app\models\Ipaddresses;
 use app\models\Companies;
+use app\models\Commissions;
 
 $ActiveCountries = Countries::find('all',array(
 	'conditions' => array('active'=>true),
@@ -32,6 +33,14 @@ if(count($Country)!=0){
 $MyCountry = Countries::find('first',array(
 	'conditions'=>array('ISO'=>strtoupper($CountryISO))
 ));
+$commissions = Commissions::find('all');
+foreach($commissions as $key=>$val){
+	if($val['base']){$base = $val['base'];}
+	print_r($base);
+	if($val['transact']==1){
+		$value = (float)$val['percent'] + (float)$base;}
+	break;
+}
 
 ?>
 <?php if( strlen(SUBDOMAIN)==2 || strlen(SUBDOMAIN)==0){?>
@@ -44,7 +53,7 @@ $MyCountry = Countries::find('first',array(
 		<?php }else{?>
 		<h4>VirtCurr.com is a Virtual Currency (Bitcoin / Litecoin) exchange or a trading platform, offering a fully regulated, secure method, for businesses to start their own buy or sell virtual currencies platform.</h4>
 		<ul>
-				<li>Fees are 0.2% per transaction</li>
+				<li>Fees are <strong><?=$value?></strong>% per transaction</li>
 				<li>Simple verification means you could be a full customer in a matter of days</li>
 				<li>Security ensured with Cold Storage, SSL 256bit encryption & 3FA</li>
 				<li>Dedicated Server for an enhanced customer experience</li>
