@@ -295,7 +295,14 @@ class CompaniesController extends \lithium\action\Controller {
 	}
 	
 	public function page($pagename=null){
-	
+		$user = Session::read('member');
+		$id = $user['_id'];
+		$settings = Settings::find('first',
+			array('conditions'=>array(
+				'subname'=>SUBDOMAIN
+			))
+		);
+		return compact('settings','pagename');
 	}	
 }
 ?>
