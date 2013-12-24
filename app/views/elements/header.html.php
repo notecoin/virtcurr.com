@@ -24,9 +24,9 @@ $details = Details::find('first',
 					<span class="icon-bar"></span>
 				</button>
 				<?php if( strlen(SUBDOMAIN)==2 || strlen(SUBDOMAIN)==0){?>
-			<a class="brand" href="<?=BASE_HOST?>/<?=LOCALE?>/"><img src="/img/virtcurr.com.gif" alt="virtcurr.com" style="margin-top:10px "></a>
+			<a class="brand" href="<?=BASE_HOST?>/<?=LOCALE?>/"><img src="/img/virtcurr.com.gif" alt="<?=BASE_HOST?>" style="margin-top:10px "></a>
 				<?php }else{?>
-			<a class="brand" href="<?=BASE_HOST?>/<?=LOCALE?>/"><img src="/img/<?=strtolower(SUBDOMAIN)?>.com.gif" alt="<?=strtolower(SUBDOMAIN)?>.com" style="margin-top:10px "></a>
+			<a class="brand" href="<?=BASE_HOST?>/<?=LOCALE?>/"><img src="/img/<?=BASE_HOST?>.com.gif"  style="margin-top:10px " alt="<?=BASE_HOST?>"></a>
 				<?php }?>
 		</div>
 		<div class="navbar-collapse collapse">

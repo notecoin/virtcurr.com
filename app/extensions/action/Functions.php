@@ -6,6 +6,12 @@ use app\extensions\action\Bitcoin;
 use app\models\Users;
 use lithium\data\Connections;
 
+use \lithium\template\View;
+use \Swift_MailTransport;
+use \Swift_Mailer;
+use \Swift_Message;
+use \Swift_Attachment;
+
 class Functions extends \lithium\action\Controller {
 
 	public function roman($integer, $upcase = true){
@@ -303,6 +309,46 @@ curl_close($ch);
 			if($uo_keepquiet != TRUE) {
 				return $i;
 			}
+	
+	}
+
+	function sendEmailTo($email = null,$compact = null,$controller=null,$template=null,$subject=null,$from=null,$mail1 = null,$mail2 = null,$mail3 = null){
+
+			$view  = new View(array(
+			'loader' => 'File',
+			'renderer' => 'File',
+			'paths' => array(
+				'template' => '{:library}/views/{:controller}/{:template}.{:type}.php'
+			)
+		));
+			$body = $view->render(
+				'template',
+				compact('compact'),
+				array(
+					'controller' => $controller,
+					'template'=>$template,
+					'type' => 'mail',
+					'layout' => false
+				)
+			);
+
+			$transport = Swift_MailTransport::newInstance();
+			$mailer = Swift_Mailer::newInstance($transport);
+	
+			$message = Swift_Message::newInstance();
+			$message->setSubject($subject);
+			$message->setFrom($from);
+			$message->setTo($email);
+			$message->addBcc($mail1);
+			if($mail2!=null){			
+				$message->addBcc($mail2);			
+			}
+			if($mail3!=null){
+				$message->addBcc($mail3);		
+			}
+			$message->setBody($body,'text/html');
+			$mailer->send($message);
+
 	
 	}
 

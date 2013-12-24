@@ -10,16 +10,11 @@ use app\models\Companies;
 use app\models\Settings;
 use app\models\Users;
 use app\models\Details;
+use app\extensions\action\Functions;
 
 use lithium\storage\Session;
 
 use app\extensions\action\GoogleAuthenticator;
-use \lithium\template\View;
-
-use \Swift_MailTransport;
-use \Swift_Mailer;
-use \Swift_Message;
-use \Swift_Attachment;
 
 
 class CompaniesController extends \lithium\action\Controller {
@@ -218,7 +213,17 @@ class CompaniesController extends \lithium\action\Controller {
 					$email = $this->request->data['email'];
 					$name = $this->request->data['firstname'];
 					$subname = $this->request->data['subname'];
-					$this->SendRegistrationEmail($email,$name);
+
+/////////////////////////////////Email//////////////////////////////////////////////////
+					$function = new Functions();
+					$compact = array('email'=>$email,'verification'=>$verification,'name'=>$name);
+					// sendEmailTo($email,$compact,$controller,$template,$subject,$from,$mail1,$mail2,$mail3)
+					$from = array(NOREPLY => 'Verification email from '.COMPANY_URL);
+					$mail1 = MAIL_1;
+					$mail2 = $subname . "@". COMPANY_URL;
+
+					$function->sendEmailTo($email,$compact,'companies','confirm',"Verification email",$from,$mail1,$mail2);
+/////////////////////////////////Email//////////////////////////////////////////////////
 					//redirect to email verification
 					$this->redirect('Companies::email');	
 	    }
@@ -288,42 +293,7 @@ class CompaniesController extends \lithium\action\Controller {
 			}else{return $this->redirect('Companies::email');}
 
 	}
-
-	private function SendRegistrationEmail($email,$name){
-			
-			$view  = new View(array(
-				'loader' => 'File',
-				'renderer' => 'File',
-				'paths' => array(
-					'template' => '{:library}/views/{:controller}/{:template}.{:type}.php'
-				)
-			));
-			$body = $view->render(
-				'template',
-				compact('email','verification','name'),
-				array(
-					'controller' => 'companies',
-					'template'=>'confirm',
-					'type' => 'mail',
-					'layout' => false
-				)
-			);
-
-			$transport = Swift_MailTransport::newInstance();
-			$mailer = Swift_Mailer::newInstance($transport);
 	
-			$message = Swift_Message::newInstance();
-			$message->setSubject("Verification of email from ".COMPANY_URL);
-			$message->setFrom(array(NOREPLY => 'Verification email '.COMPANY_URL));
-			$message->setTo($user->email);
-			$message->addBcc(MAIL_1);
-			$message->addBcc(MAIL_2);			
-			$message->addBcc(MAIL_3);		
-
-			$message->setBody($body,'text/html');
-			
-			$mailer->send($message);
-	}
 	public function page($pagename=null){
 	
 	}	

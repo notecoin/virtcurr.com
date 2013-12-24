@@ -9,6 +9,8 @@ use app\models\Transactions;
 use app\models\File;
 use app\extensions\action\GoogleAuthenticator;
 
+use app\extensions\action\Functions;
+
 use lithium\security\Auth;
 use lithium\storage\Session;
 use lithium\util\String;
@@ -16,12 +18,6 @@ use MongoID;
 
 use app\extensions\action\Bitcoin;
 use app\extensions\action\Litecoin;
-
-use \lithium\template\View;
-use \Swift_MailTransport;
-use \Swift_Mailer;
-use \Swift_Message;
-use \Swift_Attachment;
 
 
 class UsersController extends \lithium\action\Controller {
@@ -139,50 +135,41 @@ class UsersController extends \lithium\action\Controller {
 		}
 		$ga = new GoogleAuthenticator();
 		$secret = $ga->createSecret(64);
-		$oneCode = $ga->getCode($secret);	
-		$data = array(
-			'oneCode' => $oneCode
-		);
-		$details = Details::find('first',array(
-					'conditions'=>array('username'=>$username,'user_id'=>(string)$id)
-		))->save($data);
+
 		$details = Details::find('first',array(
 					'conditions'=>array('username'=>$username,'user_id'=>(string)$id)
 		));
+		if($details['oneCodeused']=='Yes' || $details['oneCodeused']==""){
+			$oneCode = $ga->getCode($secret);	
+			$data = array(
+				'oneCode' => $oneCode,
+				'oneCodeused' => 'No'
+			);
+			$details = Details::find('first',array(
+						'conditions'=>array('username'=>$username,'user_id'=>(string)$id)
+			))->save($data);
+		}
+		$details = Details::find('first',array(
+					'conditions'=>array('username'=>$username,'user_id'=>(string)$id)
+		));
+		$oneCode = $details['oneCode'];
+
 		$totp = "No";
 
 		if($details['TOTP.Validate']==true && $details['TOTP.Login']==true){
 			$totp = "Yes";
 		}
-		
-		$view  = new View(array(
-			'loader' => 'File',
-			'renderer' => 'File',
-			'paths' => array(
-				'template' => '{:library}/views/{:controller}/{:template}.{:type}.php'
-			)
-		));
 		$email = $users['email'];
-			$body = $view->render(
-				'template',
-				compact('users','oneCode','username'),
-				array(
-					'controller' => 'users',
-					'template'=>'onecode',
-					'type' => 'mail',
-					'layout' => false
-				)
-			);
+/////////////////////////////////Email//////////////////////////////////////////////////
+					$function = new Functions();
+					$compact = array('users'=>$users,'oneCode'=>$oneCode,'username'=>$username);
+					// sendEmailTo($email,$compact,$controller,$template,$subject,$from,$mail1,$mail2,$mail3)
+					$from = array(NOREPLY => 'Sign in password for '.SUBDOMAIN."@".COMPANY_URL);
+					$mail1 = MAIL_1;
+					$mail2 = null;
+					$function->sendEmailTo($email,$compact,'users','onecode',"Sign in password from ",$from,$mail1,$mail2);
+/////////////////////////////////Email//////////////////////////////////////////////////				
 
-			$transport = Swift_MailTransport::newInstance();
-			$mailer = Swift_Mailer::newInstance($transport);
-	
-			$message = Swift_Message::newInstance();
-			$message->setSubject("Sign in password for ".COMPANY_URL);
-			$message->setFrom(array(NOREPLY => 'Sign in password from '.COMPANY_URL));
-			$message->setTo($email);
-			$message->setBody($body,'text/html');
-			$mailer->send($message);
 			return $this->render(array('json' => array("Password"=>"Password sent to email","TOTP"=>$totp)));
 	}
 	
@@ -395,43 +382,23 @@ class UsersController extends \lithium\action\Controller {
 					'balance.'.$CurrencyCode => (float)0,
 					'usercode'=>$Users->usercode,
 				);
-				Details::create()->save($data);
+				$details = Details::create()->save($data);
 	
 				$email = $this->request->data['email'];
 				$name = $this->request->data['firstname'];
-				
-				$view  = new View(array(
-					'loader' => 'File',
-					'renderer' => 'File',
-					'paths' => array(
-						'template' => '{:library}/views/{:controller}/{:template}.{:type}.php'
-					)
-				));
-				$body = $view->render(
-					'template',
-					compact('email','verification','name'),
-					array(
-						'controller' => 'users',
-						'template'=>'confirm',
-						'type' => 'mail',
-						'layout' => false
-					)
-				);
-	
-				$transport = Swift_MailTransport::newInstance();
-				$mailer = Swift_Mailer::newInstance($transport);
-		
-				$message = Swift_Message::newInstance();
-				$message->setSubject("Verification of email from ".COMPANY_URL);
-				$message->setFrom(array(NOREPLY => 'Verification email '.COMPANY_URL));
-				$message->setTo($user->email);
-				$message->addBcc(MAIL_1);
-				$message->addBcc(MAIL_2);			
-				$message->addBcc(MAIL_3);		
-	
-				$message->setBody($body,'text/html');
-				
-				$mailer->send($message);
+
+
+/////////////////////////////////Email//////////////////////////////////////////////////
+					$function = new Functions();
+					$compact = array('email'=>$email,'verification'=>$verification,'name'=>$name);
+					// sendEmailTo($email,$compact,$controller,$template,$subject,$from,$mail1,$mail2,$mail3)
+					$from = array(NOREPLY => 'Verification email from '.SUBDOMAIN."@".COMPANY_URL);
+					$mail1 = MAIL_1;
+					$mail2 = SUBDOMAIN . "@". COMPANY_URL;
+
+					$function->sendEmailTo($email,$compact,'users','confirm',"Verification email",$from,$mail1,$mail2);
+/////////////////////////////////Email//////////////////////////////////////////////////				
+
 				$this->redirect('Users::email');	
 			}				
 		}
@@ -518,39 +485,16 @@ class UsersController extends \lithium\action\Controller {
 					'Added'=>false,
 				);							
 				$tx->save($data);	
-				
-			$view  = new View(array(
-				'loader' => 'File',
-				'renderer' => 'File',
-				'paths' => array(
-					'template' => '{:library}/views/{:controller}/{:template}.{:type}.php'
-				)
-			));
-			$body = $view->render(
-				'template',
-				compact('data','details','tx'),
-				array(
-					'controller' => 'users',
-					'template'=>'withdraw_btc',
-					'type' => 'mail',
-					'layout' => false
-				)
-			);
+/////////////////////////////////Email//////////////////////////////////////////////////
+					$function = new Functions();
+					$compact = array('data'=>$data,'details'=>$details,'tx'=>$tx);
+					// sendEmailTo($email,$compact,$controller,$template,$subject,$from,$mail1,$mail2,$mail3)
+					$from = array(NOREPLY => 'BTC Withdrawal Approval from '.SUBDOMAIN."@".COMPANY_URL);
+					$mail1 = MAIL_1;
+					$mail2 = SUBDOMAIN . "@". COMPANY_URL;
 
-			$transport = Swift_MailTransport::newInstance();
-			$mailer = Swift_Mailer::newInstance($transport);
-	
-			$message = Swift_Message::newInstance();
-			$message->setSubject("BTC Withdrawal Approval from ".COMPANY_URL);
-			$message->setFrom(array(NOREPLY => 'BTC Withdrawal Approval email '.COMPANY_URL));
-			$message->setTo($email);
-			$message->addBcc(MAIL_1);
-			$message->addBcc(MAIL_2);
-			$message->addBcc(MAIL_3);
-
-			$message->setBody($body,'text/html');
-			
-			$mailer->send($message);
+					$function->sendEmailTo($email,$compact,'users','withdraw_btc',"BTC Withdrawal Approval",$from,$mail1,$mail2);
+/////////////////////////////////Email//////////////////////////////////////////////////				
 		}	
 		return compact('data','details','user');
 	}
@@ -584,39 +528,16 @@ class UsersController extends \lithium\action\Controller {
 					'Added'=>false,
 				);							
 				$tx->save($data);	
-				
-			$view  = new View(array(
-				'loader' => 'File',
-				'renderer' => 'File',
-				'paths' => array(
-					'template' => '{:library}/views/{:controller}/{:template}.{:type}.php'
-				)
-			));
-			$body = $view->render(
-				'template',
-				compact('data','details','tx'),
-				array(
-					'controller' => 'users',
-					'template'=>'withdraw_ltc',
-					'type' => 'mail',
-					'layout' => false
-				)
-			);
+/////////////////////////////////Email//////////////////////////////////////////////////
+					$function = new Functions();
+					$compact = array('data'=>$data,'details'=>$details,'tx'=>$tx);
+					// sendEmailTo($email,$compact,$controller,$template,$subject,$from,$mail1,$mail2,$mail3)
+					$from = array(NOREPLY => 'LTC Withdrawal Approval from '.SUBDOMAIN."@".COMPANY_URL);
+					$mail1 = MAIL_1;
+					$mail2 = SUBDOMAIN . "@". COMPANY_URL;
 
-			$transport = Swift_MailTransport::newInstance();
-			$mailer = Swift_Mailer::newInstance($transport);
-	
-			$message = Swift_Message::newInstance();
-			$message->setSubject("LTC Withdrawal Approval from ".COMPANY_URL);
-			$message->setFrom(array(NOREPLY => 'LTC Withdrawal Approval email '.COMPANY_URL));
-			$message->setTo($email);
-			$message->addBcc(MAIL_1);
-			$message->addBcc(MAIL_2);			
-			$message->addBcc(MAIL_3);		
-
-			$message->setBody($body,'text/html');
-			
-			$mailer->send($message);
+					$function->sendEmailTo($email,$compact,'users','withdraw_btc',"LTC Withdrawal Approval",$from,$mail1,$mail2);
+/////////////////////////////////Email//////////////////////////////////////////////////				
 				
 		}	
 		return compact('data','details','user');
@@ -700,38 +621,16 @@ class UsersController extends \lithium\action\Controller {
 								'user_id'=> (string) $id
 							)
 						))->save($dataDetails);
-			$view  = new View(array(
-				'loader' => 'File',
-				'renderer' => 'File',
-				'paths' => array(
-					'template' => '{:library}/views/{:controller}/{:template}.{:type}.php'
-				)
-			));
-			$body = $view->render(
-				'template',
-				compact('transaction','details','txid'),
-				array(
-					'controller' => 'users',
-					'template'=>'withdraw_btc_sent',
-					'type' => 'mail',
-					'layout' => false
-				)
-			);
+/////////////////////////////////Email//////////////////////////////////////////////////
+					$function = new Functions();
+					$compact = array('transaction'=>$transaction,'details'=>$details,'txid'=>$txid);
+					// sendEmailTo($email,$compact,$controller,$template,$subject,$from,$mail1,$mail2,$mail3)
+					$from = array(NOREPLY => 'BTC sent from '.SUBDOMAIN."@".COMPANY_URL);
+					$mail1 = MAIL_1;
+					$mail2 = SUBDOMAIN . "@". COMPANY_URL;
 
-			$transport = Swift_MailTransport::newInstance();
-			$mailer = Swift_Mailer::newInstance($transport);
-	
-			$message = Swift_Message::newInstance();
-			$message->setSubject("BTC sent from ".COMPANY_URL);
-			$message->setFrom(array(NOREPLY => 'BTC sent from '.COMPANY_URL));
-			$message->setTo($email);
-			$message->addBcc(MAIL_1);
-			$message->addBcc(MAIL_2);			
-			$message->addBcc(MAIL_3);		
-
-			$message->setBody($body,'text/html');
-			
-			$mailer->send($message);
+					$function->sendEmailTo($email,$compact,'users','withdraw_btc_sent',"BTC sent",$from,$mail1,$mail2);
+/////////////////////////////////Email//////////////////////////////////////////////////				
 			}
 			return compact('txmessage','txid','json_url','json_feed','title');
 		}
@@ -826,40 +725,16 @@ class UsersController extends \lithium\action\Controller {
 										'user_id'=> (string) $id
 									)
 								))->save($dataDetails);
-								
-			$view  = new View(array(
-				'loader' => 'File',
-				'renderer' => 'File',
-				'paths' => array(
-					'template' => '{:library}/views/{:controller}/{:template}.{:type}.php'
-				)
-			));
-			$body = $view->render(
-				'template',
-				compact('transaction','details','txid'),
-				array(
-					'controller' => 'users',
-					'template'=>'withdraw_ltc_sent',
-					'type' => 'mail',
-					'layout' => false
-				)
-			);
+/////////////////////////////////Email//////////////////////////////////////////////////
+					$function = new Functions();
+					$compact = array('transaction'=>$transaction,'details'=>$details,'txid'=>$txid);
+					// sendEmailTo($email,$compact,$controller,$template,$subject,$from,$mail1,$mail2,$mail3)
+					$from = array(NOREPLY => 'LTC sent from '.SUBDOMAIN."@".COMPANY_URL);
+					$mail1 = MAIL_1;
+					$mail2 = SUBDOMAIN . "@". COMPANY_URL;
 
-			$transport = Swift_MailTransport::newInstance();
-			$mailer = Swift_Mailer::newInstance($transport);
-	
-			$message = Swift_Message::newInstance();
-			$message->setSubject("LTC sent from ".COMPANY_URL);
-			$message->setFrom(array(NOREPLY => 'LTC sent from '.COMPANY_URL));
-			$message->setTo($email);
-			$message->addBcc(MAIL_1);
-			$message->addBcc(MAIL_2);			
-			$message->addBcc(MAIL_3);		
-
-			$message->setBody($body,'text/html');
-			
-			$mailer->send($message);
-								
+					$function->sendEmailTo($email,$compact,'users','withdraw_ltc_sent',"LTC sent",$from,$mail1,$mail2);
+/////////////////////////////////Email//////////////////////////////////////////////////				
 								
 				}
 			}
@@ -1024,39 +899,17 @@ class UsersController extends \lithium\action\Controller {
 		);
 		$tx = Transactions::create();
 		$tx->save($data);
+/////////////////////////////////Email//////////////////////////////////////////////////
+					$function = new Functions();
+					$compact = array('data'=>$data,'details'=>$details,'user'=>$user,'CompanyBank'=>$CompanyBank);
+					// sendEmailTo($email,$compact,$controller,$template,$subject,$from,$mail1,$mail2,$mail3)
+					$from = array(NOREPLY => 'Deposit to '.SUBDOMAIN."@".COMPANY_URL);
+					$mail1 = MAIL_1;
+					$mail2 = SUBDOMAIN . "@". COMPANY_URL;
 
-		$view  = new View(array(
-			'loader' => 'File',
-			'renderer' => 'File',
-			'paths' => array(
-				'template' => '{:library}/views/{:controller}/{:template}.{:type}.php'
-			)
-		));
-		$body = $view->render(
-			'template',
-			compact('details','data','user','CompanyBank'),
-			array(
-				'controller' => 'users',
-				'template'=>'deposit',
-				'type' => 'mail',
-				'layout' => false
-			)
-		);	
+					$function->sendEmailTo($email,$compact,'users','deposit',"Deposit to ",$from,$mail1,$mail2);
+/////////////////////////////////Email//////////////////////////////////////////////////				
 
-		$transport = Swift_MailTransport::newInstance();
-		$mailer = Swift_Mailer::newInstance($transport);
-
-		$message = Swift_Message::newInstance();
-		$message->setSubject("Deposit to ".COMPANY_URL);
-		$message->setFrom(array(NOREPLY => 'Deposit to '.COMPANY_URL));
-		$message->setTo($user['email']);
-		$message->addBcc(MAIL_1);
-		$message->addBcc(MAIL_2);			
-		$message->addBcc(MAIL_3);		
-
-		$message->setBody($body,'text/html');
-		
-		$mailer->send($message);
 		return compact('title','details','data','user');			
 	}
 	public function withdraw(){
@@ -1090,39 +943,16 @@ class UsersController extends \lithium\action\Controller {
 		);
 		$tx = Transactions::create();
 		$tx->save($data);
+/////////////////////////////////Email//////////////////////////////////////////////////
+					$function = new Functions();
+					$compact = array('data'=>$data,'details'=>$details,'user'=>$user,'CompanyBank'=>$CompanyBank);
+					// sendEmailTo($email,$compact,$controller,$template,$subject,$from,$mail1,$mail2,$mail3)
+					$from = array(NOREPLY => 'Withdrawal from '.SUBDOMAIN."@".COMPANY_URL);
+					$mail1 = MAIL_1;
+					$mail2 = SUBDOMAIN . "@". COMPANY_URL;
 
-		$view  = new View(array(
-			'loader' => 'File',
-			'renderer' => 'File',
-			'paths' => array(
-				'template' => '{:library}/views/{:controller}/{:template}.{:type}.php'
-			)
-		));
-		$body = $view->render(
-			'template',
-			compact('details','data','user','CompanyBank'),
-			array(
-				'controller' => 'users',
-				'template'=>'withdraw',
-				'type' => 'mail',
-				'layout' => false
-			)
-		);	
-
-		$transport = Swift_MailTransport::newInstance();
-		$mailer = Swift_Mailer::newInstance($transport);
-
-		$message = Swift_Message::newInstance();
-		$message->setSubject("Withdraw from ".COMPANY_URL);
-		$message->setFrom(array(NOREPLY => 'Withdraw from '.COMPANY_URL));
-		$message->setTo($user['email']);
-		$message->addBcc(MAIL_1);
-		$message->addBcc(MAIL_2);			
-		$message->addBcc(MAIL_3);		
-
-		$message->setBody($body,'text/html');
-		
-		$mailer->send($message);
+					$function->sendEmailTo($email,$compact,'users','withdraw',"Withdrawal from ",$from,$mail1,$mail2);
+/////////////////////////////////Email//////////////////////////////////////////////////				
 
 		return compact('title','details','data','user');			
 	

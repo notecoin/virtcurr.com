@@ -36,8 +36,8 @@ class CompanyController extends \lithium\action\Controller {
 				$commissions[$key]['percent'] = (float)$val;
 				$i++;
 			}
-
 		}
+		$commissions[$i]['base'] = 0.1;
 		$data = array(
 			'commissions'=>$commissions
 		);

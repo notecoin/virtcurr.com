@@ -1,14 +1,14 @@
 <div style="background-color:#eeeeee;height:50px;padding-left:20px;padding-top:10px">
 	<img src="https://<?=COMPANY_URL?>/img/<?=COMPANY_URL?>.gif" alt="<?=COMPANY_URL?>">
 </div>
-<h4>Hi <?=$name?>,</h4>
+<h4>Hi <?=$compact['name']?>,</h4>
 
 <p>Please confirm your email address associated at <?=COMPANY_URL?> by clicking the following link:</p>
 
-<p><a href="https://<?=$_SERVER['HTTP_HOST'];?>/companies/confirm/<?=$email?>/<?=$verification?>">
-https://<?=$_SERVER['HTTP_HOST'];?>/companies/confirm/<?=$email?>/<?=$verification?></a></p>
+<p><a href="https://<?=$_SERVER['HTTP_HOST'];?>/companies/confirm/<?=$compact['email']?>/<?=$compact['verification']?>">
+https://<?=$_SERVER['HTTP_HOST'];?>/companies/confirm/<?=$compact['email']?>/<?=$compact['verification']?></a></p>
 
-<p>Or use this confirmation code: <?=$verification?> for your email address: <?=$email?> on the page 
+<p>Or use this confirmation code: <?=$compact['verification']?> for your email address: <?=$compact['email']?> on the page 
 https://<?=$_SERVER['HTTP_HOST'];?>/companies/email</p>
 
 </p>

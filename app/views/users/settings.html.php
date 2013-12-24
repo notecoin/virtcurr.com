@@ -84,7 +84,9 @@ use li3_qrcode\extensions\action\QRcode;
 										</tr>
 									</thead>
 									<tbody>
-								<?php $i = 0;foreach($settings['commissions'] as $sc){?>
+								<?php $i = 0;foreach($settings['commissions'] as $sc){
+									if($sc['transact']){
+								?>
 										<tr>
 											<td># of trades <?=$sc['transact']?>
 											<input type="hidden" name="transact[<?=$i?>]" id="transact[<?=$i?>]" value="<?=$sc['transact']?>">
@@ -93,7 +95,12 @@ use li3_qrcode\extensions\action\QRcode;
 											
 											</td>
 										</tr>
-								<?php	$i++;} ?>
+								<?php	}else{?>
+									<input type="hidden" name="base" id="base" value="<?=$sc['base']?>">
+								<?php
+									}
+									$i++;
+								} ?>
 									</tbody>
 								</table>
 								<input type="submit" value="Save commissions" class="btn btn-primary">

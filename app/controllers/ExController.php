@@ -987,38 +987,17 @@ $description = "";
 		$user = Users::find('first', array(
 			'conditions'=>array('_id'=>new MongoID($user_id))
 		));
-		$view  = new View(array(
-			'loader' => 'File',
-			'renderer' => 'File',
-			'paths' => array(
-				'template' => '{:library}/views/{:controller}/{:template}.{:type}.php'
-			)
-		));
-		$body = $view->render(
-			'template',
-			compact('order','user'),
-			array(
-				'controller' => 'ex',
-				'template'=>'Complete',
-				'type' => 'mail',
-				'layout' => false
-			)
-		);
+		
+/////////////////////////////////Email//////////////////////////////////////////////////
+					$function = new Functions();
+					$compact = array('order'=>$order,'user'=>$user);
+					// sendEmailTo($email,$compact,$controller,$template,$subject,$from,$mail1,$mail2,$mail3)
+					$from = array(NOREPLY => 'Your order is complete '.SUBDOMAIN."@".COMPANY_URL);
+					$mail1 = MAIL_1;
+					$mail2 = SUBDOMAIN . "@". COMPANY_URL;
 
-		$transport = Swift_MailTransport::newInstance();
-		$mailer = Swift_Mailer::newInstance($transport);
-
-		$message = Swift_Message::newInstance();
-		$message->setSubject("Your order is complete");
-		$message->setFrom(array(NOREPLY => 'Your order is complete'));
-		$message->setTo($user['email']);
-//		$message->addBcc(MAIL_1);
-//		$message->addBcc(MAIL_2);			
-//		$message->addBcc(MAIL_3);		
-
-		$message->setBody($body,'text/html');
-		$mailer->send($message);
-
+					$function->sendEmailTo($email,$compact,'ex','Complete',"Your order is complete",$from,$mail1,$mail2);
+/////////////////////////////////Email//////////////////////////////////////////////////				
 	}
 
 	public function SendFriendsEmails($order_id,$user_id){
@@ -1068,39 +1047,17 @@ $description = "";
 				$sendUserCode = $userToSend['usercode'];
 //*****************************************************************************
 //*****************************************************************************
+/////////////////////////////////Email//////////////////////////////////////////////////
+					$function = new Functions();
+					$compact = array('order'=>$order,'sendUserName'=>$sendUserName,'sendUserCode'=>$sendUserCode);
+					// sendEmailTo($email,$compact,$controller,$template,$subject,$from,$mail1,$mail2,$mail3)
+					$from = array(NOREPLY => 'Your friend placed an order');
+					$mail1 = MAIL_1;
+					$mail2 = SUBDOMAIN . "@". COMPANY_URL;
+
+					$function->sendEmailTo($email,$compact,'ex','FriendRequest',"Your friend placed an order",$from,$mail1,$mail2);
+/////////////////////////////////Email//////////////////////////////////////////////////				
 	
-		$view  = new View(array(
-			'loader' => 'File',
-			'renderer' => 'File',
-			'paths' => array(
-				'template' => '{:library}/views/{:controller}/{:template}.{:type}.php'
-			)
-		));
-
-		$body = $view->render(
-			'template',
-			compact('order','sendUserName','sendUserCode'),
-			array(
-				'controller' => 'ex',
-				'template'=>'FriendRequest',
-				'type' => 'mail',
-				'layout' => false
-			)
-		);
-
-		$transport = Swift_MailTransport::newInstance();
-		$mailer = Swift_Mailer::newInstance($transport);
-
-		$message = Swift_Message::newInstance();
-		$message->setSubject("Your friend placed an order");
-		$message->setFrom(array(NOREPLY => 'Your friend placed an order'));
-		$message->setTo($sendEmailTo);
-//		$message->addBcc(MAIL_1);
-//		$message->addBcc(MAIL_2);			
-//		$message->addBcc(MAIL_3);		
-
-		$message->setBody($body,'text/html');
-		$mailer->send($message);
 		}
 	}
 	
@@ -1111,38 +1068,16 @@ $description = "";
 		$user = Users::find('first', array(
 			'conditions'=>array('_id'=>new MongoID($user_id))
 		));
-	
-		$view  = new View(array(
-			'loader' => 'File',
-			'renderer' => 'File',
-			'paths' => array(
-				'template' => '{:library}/views/{:controller}/{:template}.{:type}.php'
-			)
-		));
-		$body = $view->render(
-			'template',
-			compact('order','user'),
-			array(
-				'controller' => 'ex',
-				'template'=>'OrderRequest',
-				'type' => 'mail',
-				'layout' => false
-			)
-		);
+/////////////////////////////////Email//////////////////////////////////////////////////
+					$function = new Functions();
+					$compact = array('user'=>$user,'order'=>$order);
+					// sendEmailTo($email,$compact,$controller,$template,$subject,$from,$mail1,$mail2,$mail3)
+					$from = array(NOREPLY => 'Your order is placed: '.SUBDOMAIN."@".COMPANY_URL);
+					$mail1 = MAIL_1;
+					$mail2 = SUBDOMAIN . "@". COMPANY_URL;
 
-		$transport = Swift_MailTransport::newInstance();
-		$mailer = Swift_Mailer::newInstance($transport);
-
-		$message = Swift_Message::newInstance();
-		$message->setSubject("Your order is placed");
-		$message->setFrom(array(NOREPLY => 'Your order is placed'));
-		$message->setTo($user['email']);
-//		$message->addBcc(MAIL_1);
-//		$message->addBcc(MAIL_2);			
-//		$message->addBcc(MAIL_3);		
-
-		$message->setBody($body,'text/html');
-		$mailer->send($message);
+					$function->sendEmailTo($email,$compact,'ex','OrderRequest',"Your order is placed",$from,$mail1,$mail2);
+/////////////////////////////////Email//////////////////////////////////////////////////				
 
 	}
 	

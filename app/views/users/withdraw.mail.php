@@ -7,39 +7,39 @@
 <table>
 		<tr>
 			<td>Reference:</td>
-			<td><strong><?=$data['Reference']?></strong></td>
+			<td><strong><?=$compact['data']['Reference']?></strong></td>
 		</tr>
 		<tr>
 			<td>Amount:</td>
-			<td><?=$data['Amount']?></td>
+			<td><?=$compact['data']['Amount']?></td>
 		</tr>
 		<tr>
 			<td>Currency:</td>
-			<td><?=$data['Currency']?></td>
+			<td><?=$compact['data']['Currency']?></td>
 		</tr>		
 		<tr>
 			<td>Account Name</td>
-			<td><?=$details['bank']['accountname'];?></td>
+			<td><?=$compact['details']['bank']['accountname'];?></td>
 		</tr>
 		<tr>
 			<td>Account Number</td>
-			<td><?=$details['bank']['accountnumber'];?></td>
+			<td><?=$compact['details']['bank']['accountnumber'];?></td>
 		</tr>
 		<tr>
 			<td>Bank Name</td>
-			<td><?=$details['bank']['bankname'];?></td>
+			<td><?=$compact['details']['bank']['bankname'];?></td>
 		</tr>
 		<tr>
 			<td>Branch Address</td>
-			<td><?=$details['bank']['branchaddress'];?></td>
+			<td><?=$compact['details']['bank']['branchaddress'];?></td>
 		</tr>
 		<tr>
 			<td>IFSC</td>
-			<td><?=$details['bank']['ifsc'];?></td>
+			<td><?=$compact['details']['bank']['ifsc'];?></td>
 		</tr>
 		<tr>
 			<td>Sort Code:</td>
-			<td><?=$details['bank']['sortcode'];?></td>
+			<td><?=$compact['details']['bank']['sortcode'];?></td>
 		</tr>
 </table>
 <p>We will approve the request and send the funds directly to your registered bank. If we are unable to send it directly, we will inform you and send funds to your postal address by cheque.</p>
